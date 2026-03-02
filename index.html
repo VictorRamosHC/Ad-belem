@@ -4,14 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AD Belém - Manager</title>
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="AD Belém">
-    <link rel="apple-touch-icon" href="logo.jpg">
-    <link rel="icon" type="image/jpg" href="logo.jpg">
-    <meta name="theme-color" content="#0e3a5d">
-
     <style>
         :root { --primary: #0e3a5d; --accent: #27ae60; --warning: #f39c12; --danger: #e74c3c; --bg: #f0f2f5; --card-bg: #ffffff; --text-main: #2d3436; --text-sub: #636e72; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -30,13 +22,13 @@
         .member-info h4 { margin: 0 0 4px 0; font-size: 16px; color: var(--primary); }
         .member-info p { margin: 0; font-size: 13px; color: var(--text-sub); }
         .member-actions { display: flex; gap: 8px; }
-        .action-btn { padding: 10px 14px; border-radius: 10px; border: none; font-size: 12px; font-weight: bold; }
+        .action-btn { padding: 10px 14px; border-radius: 10px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; }
         .edit-btn { background: #f1f3f5; color: #495057; }
         .wa-btn { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .time-badge { font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: bold; margin-top: 6px; display: inline-block; }
         .urgent { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; padding: 15px 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.08); z-index: 1000; border-top-left-radius: 20px; border-top-right-radius: 20px; }
-        .nav-item { flex: 1; text-align: center; border: none; background: none; color: var(--text-sub); font-size: 12px; font-weight: bold; }
+        .nav-item { flex: 1; text-align: center; border: none; background: none; color: var(--text-sub); font-size: 12px; font-weight: bold; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
         #form-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; z-index: 2000; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-content { background: white; border-radius: 25px; padding: 25px; width: 100%; max-width: 420px; }
@@ -83,11 +75,12 @@
             <option value="Pastor">Pastor</option>
         </select>
         <input type="tel" id="f_telefone" placeholder="WhatsApp (DDD + Número)">
-        <button onclick="salvar()" style="background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 12px; border:none; font-weight:bold; font-size: 16px; margin-bottom:12px">GRAVAR</button>
-        <button onclick="fecharForm()" style="background: #eee; width: 100%; padding: 14px; border-radius: 12px; border:none; color: #666;">FECHAR</button>
+        <button onclick="salvar()" style="background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 12px; border:none; font-weight:bold; font-size: 16px; margin-bottom:12px; width:100%">GRAVAR</button>
+        <button onclick="fecharForm()" style="background: #eee; width: 100%; padding: 14px; border-radius: 12px; border:none; color: #666; width:100%">FECHAR</button>
+        
         <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
-            <button onclick="exportarBackup()" style="background: none; border: none; color: var(--primary); font-size: 11px; font-weight: bold;">💾 Exportar Backup (Arquivo)</button>
-            <button onclick="resetarDados()" style="background: none; color: var(--danger); border:none; font-size:11px; text-decoration: underline;">Restaurar Lista Original</button>
+            <button onclick="exportarBackup()" style="background: none; border: none; color: var(--primary); font-size: 11px; font-weight: bold; cursor:pointer">💾 Exportar Backup (Arquivo)</button>
+            <button onclick="resetarDados()" style="background: none; color: var(--danger); border:none; font-size:11px; text-decoration: underline; cursor:pointer">Restaurar Lista Original</button>
         </div>
     </div>
 </div>
@@ -128,7 +121,7 @@
         {id: 32, nome: "VICTOR HUGO", data: "2008-02-29", cargo: "Membro", tel: ""}
     ];
 
-    let membros = JSON.parse(localStorage.getItem("church_db_v4_official")) || [...backupMembros];
+    let membros = JSON.parse(localStorage.getItem("db_ad_official")) || [...backupMembros];
     let abaAtual = 'geral';
 
     function calcularProximoNiver(dataNasc) {
@@ -173,7 +166,7 @@
 
         document.getElementById("dash-total").innerText = membros.length;
         document.getElementById("dash-niver").innerText = niverMesCount;
-        localStorage.setItem("church_db_v4_official", JSON.stringify(membros));
+        localStorage.setItem("db_ad_official", JSON.stringify(membros));
     }
 
     function mudarAba(aba, btn) {
@@ -192,9 +185,7 @@
         const data = document.getElementById("f_data").value;
         const cargo = document.getElementById("f_cargo").value;
         const tel = document.getElementById("f_telefone").value.replace(/\D/g,'');
-
         if(!nome || !data) return alert("Preencha nome e data!");
-
         if(id) {
             const idx = membros.findIndex(m => m.id === parseInt(id));
             membros[idx] = {id: parseInt(id), nome, data, cargo, tel};
@@ -228,7 +219,7 @@
     }
 
     function resetarDados() { 
-        if(confirm("Deseja restaurar para a lista original de 32 membros?")) { 
+        if(confirm("Deseja restaurar a lista original?")) { 
             membros = [...backupMembros]; 
             renderizar(); 
         } 
@@ -237,556 +228,6 @@
     function filtrar() {
         const t = document.getElementById("buscaNome").value.toLowerCase();
         document.querySelectorAll(".member-card").forEach(c => c.style.display = c.innerText.toLowerCase().includes(t) ? "flex" : "none");
-    }
-
-    window.onload = renderizar;
-</script>
-</body>
-</html>
-        {id: 14, nome: "JUNIOR DE OLIVEIRA", data: "1988-04-12", cargo: "Membro", tel: ""},
-        {id: 15, nome: "ENZO GABRIEL", data: "2021-04-14", cargo: "Membro", tel: ""},
-        {id: 16, nome: "MARIA DA CRUZ CONCEIÇÃO", data: "1969-05-03", cargo: "Membro", tel: ""},
-        {id: 17, nome: "CREUZA QUINTELA DA SILVA", data: "1956-05-08", cargo: "Membro", tel: ""},
-        {id: 19, nome: "APARECIDA CARDOSO QUINTELA", data: "1935-05-22", cargo: "Membro", tel: ""},
-        {id: 20, nome: "CRISTINA", data: "1975-06-25", cargo: "Membro", tel: ""},
-        {id: 21, nome: "OZIEL DA FONSECA", data: "1976-06-05", cargo: "Membro", tel: ""},
-        {id: 22, nome: "JOSELMA QUEIROZ DO MONTE", data: "1969-06-12", cargo: "Membro", tel: ""},
-        {id: 23, nome: "MAYCON APARECIDO CARVALHO", data: "1992-06-19", cargo: "Membro", tel: ""},
-        {id: 24, nome: "PEDRO HENRIQUE", data: "2007-06-15", cargo: "Membro", tel: ""},
-        {id: 25, nome: "ADONIAS QUEIROZ DO MONTE", data: "1995-07-05", cargo: "Membro", tel: ""},
-        {id: 26, nome: "NATALINO GERMANO", data: "1965-08-30", cargo: "Membro", tel: ""},
-        {id: 27, nome: "ISAQUE GRANADA", data: "2008-09-13", cargo: "Membro", tel: ""},
-        {id: 28, nome: "EDERLEI APARECIDO", data: "1980-09-25", cargo: "Membro", tel: ""},
-        {id: 29, nome: "APARECIDA DE OLIVEIRA", data: "1950-10-03", cargo: "Membro", tel: ""},
-        {id: 30, nome: "MANOELINA FUZATO", data: "1937-10-03", cargo: "Membro", tel: ""},
-        {id: 31, nome: "APARECIDA GRANADA", data: "1970-10-22", cargo: "Membro", tel: ""},
-        {id: 32, nome: "JANAINA", data: "1999-11-27", cargo: "Membro", tel: ""},
-        {id: 33, nome: "ELISANGELA SILVEIRA", data: "2000-12-27", cargo: "Membro", tel: ""}
-    ];
-
-    let membros = JSON.parse(localStorage.getItem("church_db_official")) || [...backupMembros];
-    let abaAtual = 'geral';
-
-    function calcularProximoNiver(dataNasc) {
-        const hoje = new Date();
-        const [ano, mes, dia] = dataNasc.split('-').map(Number);
-        let dataNiver = new Date(hoje.getFullYear(), mes - 1, dia);
-        if (dataNiver < hoje.setHours(0,0,0,0)) dataNiver.setFullYear(hoje.getFullYear() + 1);
-        return Math.ceil((dataNiver - new Date().setHours(0,0,0,0)) / (1000 * 60 * 60 * 24));
-    }
-
-    function renderizar() {
-        const lista = document.getElementById("lista-membros");
-        lista.innerHTML = "";
-        const mesAtual = (new Date().getMonth() + 1).toString().padStart(2, '0');
-        let niverMesCount = 0;
-
-        let exibir = [...membros];
-        if(abaAtual === 'niver') {
-            exibir = exibir.map(m => ({...m, diasPara: calcularProximoNiver(m.data)})).sort((a,b) => a.diasPara - b.diasPara);
-        } else {
-            exibir.sort((a,b) => a.nome.localeCompare(b.nome));
-        }
-
-        exibir.forEach(m => {
-            const [ano, mes, dia] = m.data.split('-');
-            if(mes === mesAtual) niverMesCount++;
-            const diasPara = calcularProximoNiver(m.data);
-            const card = document.createElement("div");
-            card.className = `member-card ${mes === mesAtual ? 'is-niver' : ''}`;
-            card.innerHTML = `
-                <div class="member-info">
-                    <h4>${m.nome}</h4>
-                    <p>${m.cargo} • ${dia}/${mes}</p>
-                    ${abaAtual === 'niver' ? `<span class="time-badge ${diasPara <= 7 ? 'urgent' : ''}">${diasPara === 0 ? 'HOJE 🎉' : 'Faltam ' + diasPara + ' dias'}</span>` : ''}
-                </div>
-                <div class="member-actions">
-                    <button class="action-btn edit-btn" onclick="editar(${m.id})">Editar</button>
-                    <button class="action-btn wa-btn" onclick="enviarParabens('${m.nome}', '${m.cargo}')">ZAP</button>
-                </div>`;
-            lista.appendChild(card);
-        });
-
-        document.getElementById("dash-total").innerText = membros.length;
-        document.getElementById("dash-niver").innerText = niverMesCount;
-        localStorage.setItem("church_db_official", JSON.stringify(membros));
-    }
-
-    function enviarParabens(nome, cargo) {
-        const pNome = nome.split(' ')[0];
-        const msg = `Paz do Senhor, ${cargo} ${pNome}! 🎂 Passando para desejar um feliz aniversário!`;
-        window.open(`https://wa.me/5519982839701?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function mudarAba(aba, btn) { 
-        abaAtual = aba; 
-        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); 
-        btn.classList.add('active'); 
-        renderizar(); 
-    }
-
-    function abrirForm() { document.getElementById("form-overlay").style.display = "flex"; }
-    function fecharForm() { document.getElementById("form-overlay").style.display = "none"; document.getElementById("f_id").value = ""; }
-
-    function salvar() {
-        const id = document.getElementById("f_id").value;
-        const nomeIn = document.getElementById("f_nome").value;
-        const dataIn = document.getElementById("f_data").value;
-        if(!nomeIn || !dataIn) return alert("Preencha nome e data!");
-        
-        const novo = { 
-            id: id ? parseInt(id) : Date.now(), 
-            nome: nomeIn.toUpperCase(), 
-            data: dataIn, 
-            cargo: document.getElementById("f_cargo").value, 
-            tel: document.getElementById("f_telefone").value.replace(/\D/g,'') 
-        };
-
-        if(id) { 
-            const idx = membros.findIndex(m => m.id === parseInt(id)); 
-            membros[idx] = novo; 
-        } else { 
-            membros.push(novo); 
-        }
-        renderizar(); fecharForm();
-    }
-
-    function editar(id) {
-        const m = membros.find(item => item.id === id);
-        document.getElementById("f_id").value = m.id;
-        document.getElementById("f_nome").value = m.nome;
-        document.getElementById("f_data").value = m.data;
-        document.getElementById("f_cargo").value = m.cargo;
-        document.getElementById("f_telefone").value = m.tel || "";
-        abrirForm();
-    }
-
-    function resetarDados() { if(confirm("Restaurar lista original?")) { membros = [...backupMembros]; renderizar(); fecharForm(); } }
-
-    function filtrar() {
-        const t = document.getElementById("buscaNome").value.toLowerCase();
-        document.querySelectorAll(".member-card").forEach(c => c.style.display = c.innerText.toLowerCase().includes(t) ? "flex" : "none");
-    }
-
-    window.onload = renderizar;
-</script>
-</body>
-</html>
-            <option value="Membro">Membro</option>
-            <option value="Congregado">Congregado(a)</option>
-            <option value="Cooperador">Cooperador(a)</option>
-            <option value="Diácono">Diácono</option>
-            <option value="Presbítero">Presbítero</option>
-            <option value="Evangelista">Evangelista</option>
-            <option value="Pastor">Pastor</option>
-        </select>
-        <input type="tel" id="f_telefone" placeholder="WhatsApp (DDD + Número)">
-        <button onclick="salvar()" style="background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 12px; border:none; font-weight:bold; font-size: 16px; margin-bottom:12px">GRAVAR</button>
-        <button onclick="fecharForm()" style="background: #eee; width: 100%; padding: 14px; border-radius: 12px; border:none; color: #666; margin-bottom: 10px;">FECHAR</button>
-        
-        <div style="border-top: 1px solid #eee; margin-top: 10px; padding-top: 15px; display: flex; gap: 5px; flex-direction: column;">
-            <button onclick="exportarBackup()" style="background: none; color: var(--primary); border:none; font-size:12px; font-weight: bold;">💾 Exportar Backup (Arquivo)</button>
-            <button onclick="resetarDados()" style="background: none; color: var(--danger); border:none; font-size:11px; text-decoration: underline;">Restaurar Lista Original</button>
-        </div>
-    </div>
-</div>
-
-<div id="toast">Ação realizada!</div>
-
-<script>
-    const backupMembros = [
-        {id: 1, nome: "LUIZ CARLOS SABINO", data: "1953-01-25", cargo: "Membro", tel: ""},
-        {id: 2, nome: "JOSE GERISMAR ONIAS", data: "1969-01-26", cargo: "Membro", tel: ""},
-        {id: 3, nome: "JENIFER MONIQUE", data: "2005-01-29", cargo: "Membro", tel: ""},
-        {id: 4, nome: "ANTONIA APARECIDA FUZATO", data: "1961-02-11", cargo: "Membro", tel: ""},
-        {id: 5, nome: "ELZA MENEZES", data: "1964-02-18", cargo: "Membro", tel: ""},
-        {id: 6, nome: "LUCAS HENRIQUE", data: "2008-02-18", cargo: "Membro", tel: ""},
-        {id: 7, nome: "JEFERSON BATISTA", data: "1996-02-20", cargo: "Membro", tel: ""},
-        {id: 8, nome: "VICTOR HUGO", data: "2008-02-29", cargo: "Membro", tel: ""},
-        {id: 9, nome: "FERNANDA DE OLIVEIRA", data: "1997-03-05", cargo: "Membro", tel: ""},
-        {id: 10, nome: "ALAN QUEIROZ DO MONTE", data: "2001-03-08", cargo: "Membro", tel: ""},
-        {id: 11, nome: "ISABELLE GRANADA", data: "2008-03-14", cargo: "Membro", tel: ""},
-        {id: 12, nome: "GINAUSIO CORREIA MENEZES", data: "1960-04-01", cargo: "Membro", tel: ""},
-        {id: 13, nome: "MARIANA", data: "1998-04-01", cargo: "Membro", tel: ""},
-        {id: 14, nome: "JUNIOR DE OLIVEIRA", data: "1988-04-12", cargo: "Membro", tel: ""},
-        {id: 15, nome: "ENZO GABRIEL", data: "2021-04-14", cargo: "Membro", tel: ""},
-        {id: 16, nome: "MARIA DA CRUZ CONCEIÇÃO", data: "1969-05-03", cargo: "Membro", tel: ""},
-        {id: 17, nome: "CREUZA QUINTELA DA SILVA", data: "1956-05-08", cargo: "Membro", tel: ""},
-        {id: 19, nome: "APARECIDA CARDOSO QUINTELA", data: "1935-05-22", cargo: "Membro", tel: ""},
-        {id: 20, nome: "CRISTINA", data: "1975-06-25", cargo: "Membro", tel: ""},
-        {id: 21, nome: "OZIEL DA FONSECA", data: "1976-06-05", cargo: "Membro", tel: ""},
-        {id: 22, nome: "JOSELMA QUEIROZ DO MONTE", data: "1969-06-12", cargo: "Membro", tel: ""},
-        {id: 23, nome: "MAYCON APARECIDO CARVALHO", data: "1992-06-19", cargo: "Membro", tel: ""},
-        {id: 24, nome: "PEDRO HENRIQUE", data: "2007-06-15", cargo: "Membro", tel: ""},
-        {id: 25, nome: "ADONIAS QUEIROZ DO MONTE", data: "1995-07-05", cargo: "Membro", tel: ""},
-        {id: 26, nome: "NATALINO GERMANO", data: "1965-08-30", cargo: "Membro", tel: ""},
-        {id: 27, nome: "ISAQUE GRANADA", data: "2008-09-13", cargo: "Membro", tel: ""},
-        {id: 28, nome: "EDERLEI APARECIDO", data: "1980-09-25", cargo: "Membro", tel: ""},
-        {id: 29, nome: "APARECIDA DE OLIVEIRA", data: "1950-10-03", cargo: "Membro", tel: ""},
-        {id: 30, nome: "MANOELINA FUZATO", data: "1937-10-03", cargo: "Membro", tel: ""},
-        {id: 31, nome: "APARECIDA GRANADA", data: "1970-10-22", cargo: "Membro", tel: ""},
-        {id: 32, nome: "JANAINA", data: "1999-11-27", cargo: "Membro", tel: ""},
-        {id: 33, nome: "ELISANGELA SILVEIRA", data: "2000-12-27", cargo: "Membro", tel: ""}
-    ];
-
-    const frasesParabens = [
-        "Paz do Senhor! Passando para parabenizar o(a) {cargo} {primeiro_nome} por mais um ano de vida! 🎂🎈 Que o Senhor continue abençoando sua caminhada e ministério!",
-        "Parabéns e a Paz do Senhor, {cargo} {primeiro_nome}! ✨🙏 Que as ricas bênçãos de Deus sejam derramadas sobre sua vida hoje e sempre!"
-    ];
-
-    let membros = JSON.parse(localStorage.getItem("church_db_vFinal")) || [...backupMembros];
-    let abaAtual = 'geral';
-    let filtroCargoAtual = 'Todos';
-
-    function showToast(msg) {
-        const t = document.getElementById("toast");
-        t.innerText = msg; t.style.opacity = 1;
-        setTimeout(() => t.style.opacity = 0, 2000);
-    }
-
-    function calcularProximoNiver(dataNasc) {
-        const hoje = new Date();
-        const [ano, mes, dia] = dataNasc.split('-').map(Number);
-        let dataNiver = new Date(hoje.getFullYear(), mes - 1, dia);
-        if (dataNiver < hoje.setHours(0,0,0,0)) dataNiver.setFullYear(hoje.getFullYear() + 1);
-        return Math.ceil((dataNiver - new Date().setHours(0,0,0,0)) / (1000 * 60 * 60 * 24));
-    }
-
-    function enviarParabens(nomeCompleto, cargo) {
-        let primeiroNome = nomeCompleto.split(' ')[0];
-        primeiroNome = primeiroNome.charAt(0).toUpperCase() + primeiroNome.slice(1).toLowerCase();
-        const msg = frasesParabens[Math.floor(Math.random() * frasesParabens.length)]
-                    .replace("{primeiro_nome}", "*" + primeiroNome + "*")
-                    .replace("{cargo}", cargo);
-        window.open(`https://wa.me/5519982839701?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function renderizar() {
-        const lista = document.getElementById("lista-membros");
-        lista.innerHTML = "";
-        const mesAtual = (new Date().getMonth() + 1).toString().padStart(2, '0');
-        let niverMesCount = 0;
-
-        let exibir = [...membros];
-        
-        // Filtro de Cargo (Novo)
-        if(filtroCargoAtual !== 'Todos') {
-            exibir = exibir.filter(m => m.cargo === filtroCargoAtual);
-        }
-
-        if(abaAtual === 'niver') {
-            exibir = exibir.map(m => ({...m, diasPara: calcularProximoNiver(m.data)})).sort((a,b) => a.diasPara - b.diasPara);
-        } else {
-            exibir.sort((a,b) => a.nome.localeCompare(b.nome));
-        }
-
-        exibir.forEach(m => {
-            const [ano, mes, dia] = m.data.split('-');
-            if(mes === mesAtual) niverMesCount++;
-            const diasPara = calcularProximoNiver(m.data);
-            const card = document.createElement("div");
-            card.className = `member-card ${mes === mesAtual ? 'is-niver' : ''}`;
-            card.innerHTML = `
-                <div class="member-info">
-                    <h4>${m.nome}</h4>
-                    <p>${m.cargo} • ${dia}/${mes}</p>
-                    ${abaAtual === 'niver' ? `<span class="time-badge ${diasPara <= 7 ? 'urgent' : ''}">${diasPara === 0 ? 'HOJE 🎉' : 'Faltam ' + diasPara + ' dias'}</span>` : ''}
-                </div>
-                <div class="member-actions">
-                    <button class="action-btn edit-btn" onclick="editar(${m.id})">Editar</button>
-                    <button class="action-btn wa-btn" onclick="enviarParabens('${m.nome}', '${m.cargo}')">ZAP</button>
-                </div>`;
-            lista.appendChild(card);
-        });
-
-        document.getElementById("dash-total").innerText = membros.length;
-        document.getElementById("dash-niver").innerText = niverMesCount;
-        localStorage.setItem("church_db_vFinal", JSON.stringify(membros));
-    }
-
-    function filtrarCargo(cargo, el) {
-        filtroCargoAtual = cargo;
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        renderizar();
-    }
-
-    function mudarAba(aba, btn) { 
-        abaAtual = aba; 
-        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); 
-        btn.classList.add('active'); 
-        
-        document.getElementById("view-membros").style.display = (aba === 'geral' || aba === 'niver') ? "block" : "none";
-        document.getElementById("view-visitantes").style.display = (aba === 'visitantes') ? "block" : "none";
-        renderizar(); 
-    }
-
-    function enviarVisitante() {
-        const nome = document.getElementById("v_nome").value;
-        const obs = document.getElementById("v_obs").value;
-        if(!nome) return alert("Digite o nome!");
-        const msg = `📌 *NOVO VISITANTE*\n*Nome:* ${nome}\n*Obs:* ${obs}`;
-        window.open(`https://wa.me/5519982839701?text=${encodeURIComponent(msg)}`, '_blank');
-        document.getElementById("v_nome").value = "";
-        document.getElementById("v_obs").value = "";
-        showToast("Enviado com sucesso!");
-    }
-
-    function exportarBackup() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(membros));
-        const dl = document.createElement('a');
-        dl.setAttribute("href", dataStr); dl.setAttribute("download", "backup_adbelem.json");
-        dl.click(); showToast("Backup baixado!");
-    }
-
-    function resetarDados() { if(confirm("Restaurar lista original?")) { membros = [...backupMembros]; renderizar(); fecharForm(); } }
-    function abrirForm() { document.getElementById("form-overlay").style.display = "flex"; }
-    function fecharForm() { document.getElementById("form-overlay").style.display = "none"; document.getElementById("f_id").value = ""; }
-
-    function salvar() {
-        const id = document.getElementById("f_id").value;
-        const nomeIn = document.getElementById("f_nome").value;
-        const dataIn = document.getElementById("f_data").value;
-        if(!nomeIn || !dataIn) return alert("Preencha nome e data!");
-        const novo = { id: id ? parseInt(id) : Date.now(), nome: nomeIn.toUpperCase(), data: dataIn, cargo: document.getElementById("f_cargo").value, tel: document.getElementById("f_telefone").value.replace(/\D/g,'') };
-        if(id) { const idx = membros.findIndex(m => m.id === parseInt(id)); membros[idx] = novo; } else { membros.push(novo); }
-        renderizar(); fecharForm(); showToast("Salvo com sucesso!");
-    }
-
-    function editar(id) {
-        const m = membros.find(item => item.id === id);
-        document.getElementById("f_id").value = m.id;
-        document.getElementById("f_nome").value = m.nome;
-        document.getElementById("f_data").value = m.data;
-        document.getElementById("f_cargo").value = m.cargo;
-        document.getElementById("f_telefone").value = m.tel || "";
-        abrirForm();
-    }
-
-    function filtrar() {
-        const t = document.getElementById("buscaNome").value.toLowerCase();
-        document.querySelectorAll(".member-card").forEach(c => c.style.display = c.innerText.toLowerCase().includes(t) ? "flex" : "none");
-    }
-    window.onload = renderizar;
-</script>
-</body>
-</html>
-<div id="form-overlay" class="overlay">
-    <div class="modal">
-        <h3 id="form-titulo">Ficha do Membro</h3>
-        <input type="hidden" id="f_id">
-        <input type="text" id="f_nome" placeholder="Nome Completo">
-        <input type="date" id="f_data">
-        <select id="f_cargo">
-            <option value="Membro">Membro</option>
-            <option value="Congregado">Congregado(a)</option>
-            <option value="Cooperador">Cooperador(a)</option>
-            <option value="Diácono">Diácono</option>
-            <option value="Presbítero">Presbítero</option>
-            <option value="Evangelista">Evangelista</option>
-            <option value="Pastor">Pastor</option>
-        </select>
-        <input type="tel" id="f_tel" placeholder="WhatsApp">
-        <button onclick="salvar()" style="background: var(--primary); color:white; width:100%; padding:16px; border-radius:15px; border:none; font-weight:bold;">GRAVAR</button>
-        <button onclick="fecharForm()" style="background:none; color:gray; width:100%; margin-top:10px; border:none;">CANCELAR</button>
-    </div>
-</div>
-
-<div id="toast">Sucesso!</div>
-
-<script>
-    const backupMembros = [
-        {id: 1, nome: "LUIZ CARLOS SABINO", data: "1953-01-25", cargo: "Membro", tel: ""},
-        {id: 2, nome: "JOSE GERISMAR ONIAS", data: "1969-01-26", cargo: "Membro", tel: ""},
-        {id: 3, nome: "JENIFER MONIQUE", data: "2005-01-29", cargo: "Membro", tel: ""},
-        {id: 4, nome: "ANTONIA APARECIDA FUZATO", data: "1961-02-11", cargo: "Membro", tel: ""},
-        {id: 5, nome: "ELZA MENEZES", data: "1964-02-18", cargo: "Membro", tel: ""},
-        {id: 6, nome: "LUCAS HENRIQUE", data: "2008-02-18", cargo: "Membro", tel: ""},
-        {id: 7, nome: "JEFERSON BATISTA", data: "1996-02-20", cargo: "Membro", tel: ""},
-        {id: 8, nome: "VICTOR HUGO", data: "2008-02-29", cargo: "Membro", tel: ""},
-        {id: 9, nome: "FERNANDA DE OLIVEIRA", data: "1997-03-05", cargo: "Membro", tel: ""},
-        {id: 10, nome: "ALAN QUEIROZ DO MONTE", data: "2001-03-08", cargo: "Membro", tel: ""},
-        {id: 11, nome: "ISABELLE GRANADA", data: "2008-03-14", cargo: "Membro", tel: ""},
-        {id: 12, nome: "GINAUSIO CORREIA MENEZES", data: "1960-04-01", cargo: "Membro", tel: ""},
-        {id: 13, nome: "MARIANA", data: "1998-04-01", cargo: "Membro", tel: ""},
-        {id: 14, nome: "JUNIOR DE OLIVEIRA", data: "1988-04-12", cargo: "Membro", tel: ""},
-        {id: 15, nome: "ENZO GABRIEL", data: "2021-04-14", cargo: "Membro", tel: ""},
-        {id: 16, nome: "MARIA DA CRUZ CONCEIÇÃO", data: "1969-05-03", cargo: "Membro", tel: ""},
-        {id: 17, nome: "CREUZA QUINTELA DA SILVA", data: "1956-05-08", cargo: "Membro", tel: ""},
-        {id: 19, nome: "APARECIDA CARDOSO QUINTELA", data: "1935-05-22", cargo: "Membro", tel: ""},
-        {id: 20, nome: "CRISTINA", data: "1975-06-25", cargo: "Membro", tel: ""},
-        {id: 21, nome: "OZIEL DA FONSECA", data: "1976-06-05", cargo: "Membro", tel: ""},
-        {id: 22, nome: "JOSELMA QUEIROZ DO MONTE", data: "1969-06-12", cargo: "Membro", tel: ""},
-        {id: 23, nome: "MAYCON APARECIDO CARVALHO", data: "1992-06-19", cargo: "Membro", tel: ""},
-        {id: 24, nome: "PEDRO HENRIQUE", data: "2007-06-15", cargo: "Membro", tel: ""},
-        {id: 25, nome: "ADONIAS QUEIROZ DO MONTE", data: "1995-07-05", cargo: "Membro", tel: ""},
-        {id: 26, nome: "NATALINO GERMANO", data: "1965-08-30", cargo: "Membro", tel: ""},
-        {id: 27, nome: "ISAQUE GRANADA", data: "2008-09-13", cargo: "Membro", tel: ""},
-        {id: 28, nome: "EDERLEI APARECIDO", data: "1980-09-25", cargo: "Membro", tel: ""},
-        {id: 29, nome: "APARECIDA DE OLIVEIRA", data: "1950-10-03", cargo: "Membro", tel: ""},
-        {id: 30, nome: "MANOELINA FUZATO", data: "1937-10-03", cargo: "Membro", tel: ""},
-        {id: 31, nome: "APARECIDA GRANADA", data: "1970-10-22", cargo: "Membro", tel: ""},
-        {id: 32, nome: "JANAINA", data: "1999-11-27", cargo: "Membro", tel: ""},
-        {id: 33, nome: "ELISANGELA SILVEIRA", data: "2000-12-27", cargo: "Membro", tel: ""}
-    ];
-
-    let membros = JSON.parse(localStorage.getItem("db_ad_pro_v4"));
-    if(!membros || membros.length === 0) {
-        membros = [...backupMembros];
-        localStorage.setItem("db_ad_pro_v4", JSON.stringify(membros));
-    }
-
-    let viewAtiva = 'membros';
-    let filtroCargo = 'Todos';
-
-    function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.style.opacity = 1; setTimeout(()=>t.style.opacity=0, 2000); }
-
-    function calcularProximoNiver(dataNasc) {
-        const hoje = new Date();
-        const [ano, mes, dia] = dataNasc.split('-').map(Number);
-        let niver = new Date(hoje.getFullYear(), mes - 1, dia);
-        if (niver < hoje.setHours(0,0,0,0)) niver.setFullYear(hoje.getFullYear() + 1);
-        return Math.ceil((niver - new Date().setHours(0,0,0,0)) / (86400000));
-    }
-
-    function renderizar() {
-        const lista = document.getElementById("lista-membros");
-        lista.innerHTML = "";
-        const mesAtual = (new Date().getMonth() + 1).toString().padStart(2, '0');
-        let countNiver = 0;
-
-        let exibir = [...membros];
-        if(filtroCargo !== 'Todos') exibir = exibir.filter(m => m.cargo === filtroCargo);
-        
-        if(viewAtiva === 'niver') {
-            exibir = exibir.map(m => ({...m, d: calcularProximoNiver(m.data)})).sort((a,b)=>a.d - b.d);
-        } else {
-            exibir.sort((a,b)=>a.nome.localeCompare(b.nome));
-        }
-
-        exibir.forEach(m => {
-            const [ano, mes, dia] = m.data.split('-');
-            if(mes === mesAtual) countNiver++;
-            const d = calcularProximoNiver(m.data);
-            const card = document.createElement("div");
-            card.className = `member-card ${mes === mesAtual ? 'is-niver' : ''}`;
-            card.innerHTML = `
-                <div class="member-info">
-                    <h4>${m.nome}</h4>
-                    <p>${m.cargo} • ${dia}/${mes}</p>
-                    ${viewAtiva === 'niver' ? `<span class="time-badge ${d<=7?'urgent':''}">${d===0?'HOJE 🎉':'Faltam '+d+' dias'}</span>`:''}
-                </div>
-                <div class="member-actions">
-                    <button class="btn-action btn-edit" onclick="editar(${m.id})">EDITAR</button>
-                    <button class="btn-action btn-wa" onclick="enviarZap('${m.nome}','${m.cargo}','${m.tel}')">ZAP</button>
-                </div>
-            `;
-            lista.appendChild(card);
-        });
-        document.getElementById("dash-total").innerText = membros.length;
-        document.getElementById("dash-niver").innerText = countNiver;
-        localStorage.setItem("db_ad_pro_v4", JSON.stringify(membros));
-    }
-
-    function mudarView(v, btn) {
-        viewAtiva = v;
-        document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById("view-membros").style.display = (v==='membros'||v==='niver')?'block':'none';
-        document.getElementById("view-visitantes").style.display = v==='visitantes'?'block':'none';
-        document.getElementById("view-ajustes").style.display = v==='ajustes'?'block':'none';
-        document.getElementById("main-fab").style.display = (v==='membros'||v==='niver')?'flex':'none';
-        renderizar();
-    }
-
-    function filtrarCargo(c, el) {
-        filtroCargo = c;
-        document.querySelectorAll('.chip').forEach(ch=>ch.classList.remove('active'));
-        el.classList.add('active');
-        renderizar();
-    }
-
-    function enviarZap(nome, cargo, tel) {
-        const pNome = nome.split(' ')[0];
-        const msg = `Paz do Senhor, ${cargo} ${pNome}! 🎂 Passando para desejar um feliz aniversário! Que Deus te abençoe poderosamente! 🙌`;
-        window.open(`https://wa.me/${tel?tel:'5519982839701'}?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function abrirForm() { document.getElementById("form-overlay").style.display = "flex"; }
-    function fecharForm() { document.getElementById("form-overlay").style.display = "none"; document.getElementById("f_id").value = ""; document.getElementById("f_nome").value = ""; }
-
-    function salvar() {
-        const id = document.getElementById("f_id").value;
-        const nome = document.getElementById("f_nome").value.toUpperCase();
-        const data = document.getElementById("f_data").value;
-        if(!nome || !data) return alert("Preencha os campos!");
-        const novo = { id: id ? parseInt(id) : Date.now(), nome, data, cargo: document.getElementById("f_cargo").value, tel: document.getElementById("f_tel").value.replace(/\D/g,'') };
-        if(id) { const idx = membros.findIndex(m=>m.id===parseInt(id)); membros[idx]=novo; } else { membros.push(novo); }
-        renderizar(); fecharForm(); showToast("Salvo!");
-    }
-
-    function editar(id) {
-        const m = membros.find(x=>x.id===id);
-        document.getElementById("f_id").value = m.id;
-        document.getElementById("f_nome").value = m.nome;
-        document.getElementById("f_data").value = m.data;
-        document.getElementById("f_cargo").value = m.cargo;
-        document.getElementById("f_tel").value = m.tel || "";
-        abrirForm();
-    }
-
-    function enviarVisitante() {
-        const n = document.getElementById("v_nome").value;
-        const o = document.getElementById("v_obs").value;
-        if(!n) return alert("Nome necessário!");
-        const msg = `📌 *NOVO VISITANTE - AD BELÉM*\n\n*Nome:* ${n}\n*Obs:* ${o}`;
-        window.open(`https://wa.me/5519982839701?text=${encodeURIComponent(msg)}`, '_blank');
-        showToast("Enviado!");
-    }
-
-    function exportarBackup() {
-        const blob = new Blob([JSON.stringify(membros)], {type: 'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = 'backup_ad_belem.json'; a.click();
-        showToast("Arquivo gerado!");
-    }
-
-    function resetarDados() { if(confirm("Voltar para lista original?")) { membros = [...backupMembros]; renderizar(); } }
-
-    function filtrar() {
-        const t = document.getElementById("buscaNome").value.toLowerCase();
-        document.querySelectorAll(".member-card").forEach(c => c.style.display = c.innerText.toLowerCase().includes(t) ? "flex" : "none");
-    }
-
-    window.onload = renderizar;
-</script>
-</body>
-</html>
-        
-        if(id) {
-            const idx = membros.findIndex(m => m.id === parseInt(id));
-            membros[idx] = {id: parseInt(id), nome, data, cargo: document.getElementById("f_cargo").value};
-        } else {
-            membros.push({id: Date.now(), nome, data, cargo: document.getElementById("f_cargo").value});
-        }
-        renderizar(); fecharForm();
-    }
-
-    function editar(id) {
-        const m = membros.find(x => x.id === id);
-        document.getElementById("f_id").value = m.id;
-        document.getElementById("f_nome").value = m.nome;
-        document.getElementById("f_data").value = m.data;
-        document.getElementById("f_cargo").value = m.cargo;
-        abrirForm();
-    }
-
-    function abrirConfig() {
-        if(confirm("Deseja resetar para a lista original?")) {
-            membros = backup;
-            renderizar();
-        }
     }
 
     window.onload = renderizar;
