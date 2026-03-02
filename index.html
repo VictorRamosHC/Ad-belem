@@ -3,108 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AD Belém - Manager</title>
+    <title>AD Belém - Manager Pro</title>
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#0e3a5d">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="logo.jpg">
     <link rel="icon" type="image/jpg" href="logo.jpg">
+    <meta name="theme-color" content="#0e3a5d">
+
     <style>
         :root { --primary: #0e3a5d; --accent: #27ae60; --warning: #f39c12; --danger: #e74c3c; --bg: #f0f2f5; --card-bg: #ffffff; --text-main: #2d3436; --text-sub: #636e72; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: sans-serif; background: var(--bg); margin: 0; padding-bottom: 90px; color: var(--text-main); }
-        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; }
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; margin-top: -20px; }
-        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .member-card { background: white; margin: 10px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .member-card.is-niver { border-left: 5px solid var(--warning); }
-        .btn-circle { width: 40px; height: 40px; border-radius: 50%; border: none; background: #eee; margin-left: 5px; cursor: pointer; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0 0 90px 0; color: var(--text-main); }
+        
+        /* Layout */
+        header { background: var(--primary); color: white; padding: 25px 15px 40px; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; margin-top: -25px; }
+        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 18px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .stat-card b { font-size: 1.6em; display: block; color: var(--primary); }
+        .stat-card small { color: var(--text-sub); text-transform: uppercase; font-size: 0.7em; font-weight: bold; }
+
+        /* Filtros */
+        .search-area { padding: 15px; }
+        .search-box { width: 100%; padding: 14px 18px; border: 1px solid #ddd; border-radius: 15px; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .filter-bar { display: flex; gap: 8px; overflow-x: auto; padding: 0 15px 15px; scrollbar-width: none; }
+        .filter-bar::-webkit-scrollbar { display: none; }
+        .chip { background: white; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: bold; white-space: nowrap; border: 1px solid #ddd; color: var(--text-sub); }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* Lista */
+        .member-list { padding: 0 15px; }
+        .member-card { background: var(--card-bg); border-radius: 20px; padding: 18px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 6px solid transparent; }
+        .member-card.is-niver { border-left-color: var(--warning); background: #fffdf2; }
+        .time-badge { font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: bold; margin-top: 6px; display: inline-block; background: #eee; }
+        .urgent { background: #fee2e2; color: #991b1b; }
+
+        /* Botões */
+        .member-actions { display: flex; gap: 8px; }
+        .btn-action { padding: 10px 14px; border-radius: 10px; border: none; font-size: 11px; font-weight: bold; }
+        .btn-edit { background: #f1f3f5; color: #495057; }
         .btn-wa { background: #dcfce7; color: #166534; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; padding: 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
-        .nav-item { flex: 1; border: none; background: none; font-weight: bold; color: var(--text-sub); }
+        .fab { position: fixed; bottom: 85px; right: 20px; width: 60px; height: 60px; background: var(--accent); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 20px rgba(39,174,96,0.3); z-index: 999; border: none; }
+
+        /* Navegação */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; padding: 12px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 1000; border-top-left-radius: 25px; border-top-right-radius: 25px; }
+        .nav-item { flex: 1; text-align: center; border: none; background: none; color: var(--text-sub); font-size: 10px; font-weight: bold; }
         .nav-item.active { color: var(--primary); }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 10; }
-        .modal { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 400px; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; }
-        .fab { position: fixed; bottom: 85px; right: 20px; width: 60px; height: 60px; background: var(--accent); color: white; border-radius: 20px; border: none; font-size: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+        /* Modais */
+        .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; z-index: 2000; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal { background: white; border-radius: 25px; padding: 25px; width: 100%; max-width: 450px; }
+        input, select, textarea { width: 100%; margin-bottom: 12px; padding: 14px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; background: #f9f9f9; }
+        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 8px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: 0.3s; z-index: 3000; }
     </style>
 </head>
 <body>
 
-<header><h2>AD Belém Manager</h2></header>
+<header>
+    <div style="font-size: 0.8em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; opacity: 0.8;">AD Belém</div>
+    <h2 style="margin: 0;">Manager Pro</h2>
+</header>
 
-<div class="stats">
-    <div class="stat-card"><b id="dash-total">0</b><br><small>Membros</small></div>
-    <div class="stat-card"><b id="dash-niver" style="color:var(--warning)">0</b><br><small>Nivers Mês</small></div>
+<div class="stats-grid">
+    <div class="stat-card"><b id="dash-total">0</b><small>Membros</small></div>
+    <div class="stat-card"><b id="dash-niver" style="color: var(--warning);">0</b><small>No Mês</small></div>
 </div>
 
-<div id="lista-membros"></div>
+<div id="view-membros">
+    <div class="search-area"><input type="text" id="buscaNome" class="search-box" placeholder="Buscar irmão(ã)..." onkeyup="filtrar()"></div>
+    <div class="filter-bar">
+        <div class="chip active" onclick="filtrarCargo('Todos', this)">Todos</div>
+        <div class="chip" onclick="filtrarCargo('Pastor', this)">Pastores</div>
+        <div class="chip" onclick="filtrarCargo('Presbítero', this)">Presbíteros</div>
+        <div class="chip" onclick="filtrarCargo('Diácono', this)">Diáconos</div>
+        <div class="chip" onclick="filtrarCargo('Cooperador', this)">Obreiros</div>
+        <div class="chip" onclick="filtrarCargo('Membro', this)">Membros</div>
+    </div>
+    <div id="lista-membros" class="member-list"></div>
+</div>
 
-<button class="fab" onclick="abrirForm()">+</button>
+<div id="view-visitantes" style="display:none; padding:20px;">
+    <h3 style="color: var(--primary);">Novo Visitante</h3>
+    <input type="text" id="v_nome" placeholder="Nome do Visitante">
+    <input type="tel" id="v_tel" placeholder="WhatsApp">
+    <textarea id="v_obs" placeholder="Observações/Pedido de Oração" rows="4"></textarea>
+    <button onclick="enviarVisitante()" style="background: var(--accent); color:white; width:100%; padding:18px; border-radius:15px; border:none; font-weight:bold;">ENVIAR PARA O WHATSAPP</button>
+</div>
+
+<div id="view-ajustes" style="display:none; padding:20px;">
+    <h3 style="color: var(--primary);">Gerenciamento</h3>
+    <button onclick="exportarBackup()" style="background: white; color: var(--primary); width:100%; padding:15px; border-radius:12px; border:1px solid var(--primary); font-weight:bold; margin-bottom:15px;">💾 SALVAR BACKUP EM ARQUIVO</button>
+    <button onclick="resetarDados()" style="background: #fff0f0; color: var(--danger); width:100%; padding:12px; border-radius:12px; border:none; font-size:11px;">⚠️ RESTAURAR LISTA ORIGINAL</button>
+</div>
+
+<button class="fab" id="main-fab" onclick="abrirForm()">+</button>
 
 <nav class="bottom-nav">
-    <button class="nav-item active" onclick="location.reload()">👥 LISTA</button>
-    <button class="nav-item" onclick="abrirConfig()">⚙️ AJUSTES</button>
+    <button class="nav-item active" onclick="mudarView('membros', this)">👥 LISTA</button>
+    <button class="nav-item" onclick="mudarView('niver', this)">🎂 NIVERS</button>
+    <button class="nav-item" onclick="mudarView('visitantes', this)">🤝 VISITAS</button>
+    <button class="nav-item" onclick="mudarView('ajustes', this)">⚙️ AJUSTES</button>
 </nav>
 
 <div id="form-overlay" class="overlay">
     <div class="modal">
-        <h3>Cadastro</h3>
+        <h3 id="form-titulo">Ficha do Membro</h3>
         <input type="hidden" id="f_id">
-        <input type="text" id="f_nome" placeholder="Nome">
+        <input type="text" id="f_nome" placeholder="Nome Completo">
         <input type="date" id="f_data">
         <select id="f_cargo">
             <option value="Membro">Membro</option>
-            <option value="Obreiro">Obreiro(a)</option>
+            <option value="Congregado">Congregado(a)</option>
+            <option value="Cooperador">Cooperador(a)</option>
+            <option value="Diácono">Diácono</option>
+            <option value="Presbítero">Presbítero</option>
+            <option value="Evangelista">Evangelista</option>
             <option value="Pastor">Pastor</option>
         </select>
-        <button onclick="salvar()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px;">GRAVAR</button>
-        <button onclick="fecharForm()" style="width:100%; margin-top:10px; background:none; border:none; color:gray;">FECHAR</button>
+        <input type="tel" id="f_tel" placeholder="WhatsApp">
+        <button onclick="salvar()" style="background: var(--primary); color:white; width:100%; padding:16px; border-radius:15px; border:none; font-weight:bold;">GRAVAR</button>
+        <button onclick="fecharForm()" style="background:none; color:gray; width:100%; margin-top:10px; border:none;">CANCELAR</button>
     </div>
 </div>
 
+<div id="toast">Sucesso!</div>
+
 <script>
-    const backup = [
-        {id: 1, nome: "LUIZ CARLOS SABINO", data: "1953-01-25", cargo: "Membro"},
-        {id: 2, nome: "JOSE GERISMAR ONIAS", data: "1969-01-26", cargo: "Membro"},
-        {id: 3, nome: "JENIFER MONIQUE", data: "2005-01-29", cargo: "Membro"}
+    const backupMembros = [
+        {id: 1, nome: "LUIZ CARLOS SABINO", data: "1953-01-25", cargo: "Membro", tel: ""},
+        {id: 2, nome: "JOSE GERISMAR ONIAS", data: "1969-01-26", cargo: "Membro", tel: ""},
+        {id: 3, nome: "JENIFER MONIQUE", data: "2005-01-29", cargo: "Membro", tel: ""},
+        {id: 4, nome: "ANTONIA APARECIDA FUZATO", data: "1961-02-11", cargo: "Membro", tel: ""},
+        {id: 5, nome: "ELZA MENEZES", data: "1964-02-18", cargo: "Membro", tel: ""},
+        {id: 6, nome: "LUCAS HENRIQUE", data: "2008-02-18", cargo: "Membro", tel: ""},
+        {id: 7, nome: "JEFERSON BATISTA", data: "1996-02-20", cargo: "Membro", tel: ""},
+        {id: 8, nome: "VICTOR HUGO", data: "2008-02-29", cargo: "Membro", tel: ""},
+        {id: 9, nome: "FERNANDA DE OLIVEIRA", data: "1997-03-05", cargo: "Membro", tel: ""},
+        {id: 10, nome: "ALAN QUEIROZ DO MONTE", data: "2001-03-08", cargo: "Membro", tel: ""},
+        {id: 11, nome: "ISABELLE GRANADA", data: "2008-03-14", cargo: "Membro", tel: ""},
+        {id: 12, nome: "GINAUSIO CORREIA MENEZES", data: "1960-04-01", cargo: "Membro", tel: ""},
+        {id: 13, nome: "MARIANA", data: "1998-04-01", cargo: "Membro", tel: ""},
+        {id: 14, nome: "JUNIOR DE OLIVEIRA", data: "1988-04-12", cargo: "Membro", tel: ""},
+        {id: 15, nome: "ENZO GABRIEL", data: "2021-04-14", cargo: "Membro", tel: ""},
+        {id: 16, nome: "MARIA DA CRUZ CONCEIÇÃO", data: "1969-05-03", cargo: "Membro", tel: ""},
+        {id: 17, nome: "CREUZA QUINTELA DA SILVA", data: "1956-05-08", cargo: "Membro", tel: ""},
+        {id: 19, nome: "APARECIDA CARDOSO QUINTELA", data: "1935-05-22", cargo: "Membro", tel: ""},
+        {id: 20, nome: "CRISTINA", data: "1975-06-25", cargo: "Membro", tel: ""},
+        {id: 21, nome: "OZIEL DA FONSECA", data: "1976-06-05", cargo: "Membro", tel: ""},
+        {id: 22, nome: "JOSELMA QUEIROZ DO MONTE", data: "1969-06-12", cargo: "Membro", tel: ""},
+        {id: 23, nome: "MAYCON APARECIDO CARVALHO", data: "1992-06-19", cargo: "Membro", tel: ""},
+        {id: 24, nome: "PEDRO HENRIQUE", data: "2007-06-15", cargo: "Membro", tel: ""},
+        {id: 25, nome: "ADONIAS QUEIROZ DO MONTE", data: "1995-07-05", cargo: "Membro", tel: ""},
+        {id: 26, nome: "NATALINO GERMANO", data: "1965-08-30", cargo: "Membro", tel: ""},
+        {id: 27, nome: "ISAQUE GRANADA", data: "2008-09-13", cargo: "Membro", tel: ""},
+        {id: 28, nome: "EDERLEI APARECIDO", data: "1980-09-25", cargo: "Membro", tel: ""},
+        {id: 29, nome: "APARECIDA DE OLIVEIRA", data: "1950-10-03", cargo: "Membro", tel: ""},
+        {id: 30, nome: "MANOELINA FUZATO", data: "1937-10-03", cargo: "Membro", tel: ""},
+        {id: 31, nome: "APARECIDA GRANADA", data: "1970-10-22", cargo: "Membro", tel: ""},
+        {id: 32, nome: "JANAINA", data: "1999-11-27", cargo: "Membro", tel: ""},
+        {id: 33, nome: "ELISANGELA SILVEIRA", data: "2000-12-27", cargo: "Membro", tel: ""}
     ];
 
-    let membros = JSON.parse(localStorage.getItem("church_db_v4")) || backup;
+    let membros = JSON.parse(localStorage.getItem("db_ad_pro_v4"));
+    if(!membros || membros.length === 0) {
+        membros = [...backupMembros];
+        localStorage.setItem("db_ad_pro_v4", JSON.stringify(membros));
+    }
+
+    let viewAtiva = 'membros';
+    let filtroCargo = 'Todos';
+
+    function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.style.opacity = 1; setTimeout(()=>t.style.opacity=0, 2000); }
+
+    function calcularProximoNiver(dataNasc) {
+        const hoje = new Date();
+        const [ano, mes, dia] = dataNasc.split('-').map(Number);
+        let niver = new Date(hoje.getFullYear(), mes - 1, dia);
+        if (niver < hoje.setHours(0,0,0,0)) niver.setFullYear(hoje.getFullYear() + 1);
+        return Math.ceil((niver - new Date().setHours(0,0,0,0)) / (86400000));
+    }
 
     function renderizar() {
         const lista = document.getElementById("lista-membros");
         lista.innerHTML = "";
         const mesAtual = (new Date().getMonth() + 1).toString().padStart(2, '0');
-        let nivers = 0;
+        let countNiver = 0;
 
-        membros.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(m => {
-            const mes = m.data.split('-')[1];
-            if(mes === mesAtual) nivers++;
-            
+        let exibir = [...membros];
+        if(filtroCargo !== 'Todos') exibir = exibir.filter(m => m.cargo === filtroCargo);
+        
+        if(viewAtiva === 'niver') {
+            exibir = exibir.map(m => ({...m, d: calcularProximoNiver(m.data)})).sort((a,b)=>a.d - b.d);
+        } else {
+            exibir.sort((a,b)=>a.nome.localeCompare(b.nome));
+        }
+
+        exibir.forEach(m => {
+            const [ano, mes, dia] = m.data.split('-');
+            if(mes === mesAtual) countNiver++;
+            const d = calcularProximoNiver(m.data);
             const card = document.createElement("div");
             card.className = `member-card ${mes === mesAtual ? 'is-niver' : ''}`;
             card.innerHTML = `
-                <div><b>${m.nome}</b><br><small>${m.cargo}</small></div>
-                <div>
-                    <button class="btn-circle" onclick="editar(${m.id})">✎</button>
-                    <button class="btn-circle btn-wa" onclick="alert('Paz do Senhor!')">Z</button>
+                <div class="member-info">
+                    <h4>${m.nome}</h4>
+                    <p>${m.cargo} • ${dia}/${mes}</p>
+                    ${viewAtiva === 'niver' ? `<span class="time-badge ${d<=7?'urgent':''}">${d===0?'HOJE 🎉':'Faltam '+d+' dias'}</span>`:''}
+                </div>
+                <div class="member-actions">
+                    <button class="btn-action btn-edit" onclick="editar(${m.id})">EDITAR</button>
+                    <button class="btn-action btn-wa" onclick="enviarZap('${m.nome}','${m.cargo}','${m.tel}')">ZAP</button>
                 </div>
             `;
             lista.appendChild(card);
         });
         document.getElementById("dash-total").innerText = membros.length;
-        document.getElementById("dash-niver").innerText = nivers;
-        localStorage.setItem("church_db_v4", JSON.stringify(membros));
+        document.getElementById("dash-niver").innerText = countNiver;
+        localStorage.setItem("db_ad_pro_v4", JSON.stringify(membros));
+    }
+
+    function mudarView(v, btn) {
+        viewAtiva = v;
+        document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById("view-membros").style.display = (v==='membros'||v==='niver')?'block':'none';
+        document.getElementById("view-visitantes").style.display = v==='visitantes'?'block':'none';
+        document.getElementById("view-ajustes").style.display = v==='ajustes'?'block':'none';
+        document.getElementById("main-fab").style.display = (v==='membros'||v==='niver')?'flex':'none';
+        renderizar();
+    }
+
+    function filtrarCargo(c, el) {
+        filtroCargo = c;
+        document.querySelectorAll('.chip').forEach(ch=>ch.classList.remove('active'));
+        el.classList.add('active');
+        renderizar();
+    }
+
+    function enviarZap(nome, cargo, tel) {
+        const pNome = nome.split(' ')[0];
+        const msg = `Paz do Senhor, ${cargo} ${pNome}! 🎂 Passando para desejar um feliz aniversário! Que Deus te abençoe poderosamente! 🙌`;
+        window.open(`https://wa.me/${tel?tel:'5519982839701'}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function abrirForm() { document.getElementById("form-overlay").style.display = "flex"; }
-    function fecharForm() { document.getElementById("form-overlay").style.display = "none"; document.getElementById("f_id").value = ""; }
-    
+    function fecharForm() { document.getElementById("form-overlay").style.display = "none"; document.getElementById("f_id").value = ""; document.getElementById("f_nome").value = ""; }
+
     function salvar() {
         const id = document.getElementById("f_id").value;
         const nome = document.getElementById("f_nome").value.toUpperCase();
         const data = document.getElementById("f_data").value;
-        if(!nome || !data) return alert("Preencha tudo!");
+        if(!nome || !data) return alert("Preencha os campos!");
+        const novo = { id: id ? parseInt(id) : Date.now(), nome, data, cargo: document.getElementById("f_cargo").value, tel: document.getElementById("f_tel").value.replace(/\D/g,'') };
+        if(id) { const idx = membros.findIndex(m=>m.id===parseInt(id)); membros[idx]=novo; } else { membros.push(novo); }
+        renderizar(); fecharForm(); showToast("Salvo!");
+    }
+
+    function editar(id) {
+        const m = membros.find(x=>x.id===id);
+        document.getElementById("f_id").value = m.id;
+        document.getElementById("f_nome").value = m.nome;
+        document.getElementById("f_data").value = m.data;
+        document.getElementById("f_cargo").value = m.cargo;
+        document.getElementById("f_tel").value = m.tel || "";
+        abrirForm();
+    }
+
+    function enviarVisitante() {
+        const n = document.getElementById("v_nome").value;
+        const o = document.getElementById("v_obs").value;
+        if(!n) return alert("Nome necessário!");
+        const msg = `📌 *NOVO VISITANTE - AD BELÉM*\n\n*Nome:* ${n}\n*Obs:* ${o}`;
+        window.open(`https://wa.me/5519982839701?text=${encodeURIComponent(msg)}`, '_blank');
+        showToast("Enviado!");
+    }
+
+    function exportarBackup() {
+        const blob = new Blob([JSON.stringify(membros)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'backup_ad_belem.json'; a.click();
+        showToast("Arquivo gerado!");
+    }
+
+    function resetarDados() { if(confirm("Voltar para lista original?")) { membros = [...backupMembros]; renderizar(); } }
+
+    function filtrar() {
+        const t = document.getElementById("buscaNome").value.toLowerCase();
+        document.querySelectorAll(".member-card").forEach(c => c.style.display = c.innerText.toLowerCase().includes(t) ? "flex" : "none");
+    }
+
+    window.onload = renderizar;
+</script>
+</body>
+</html>
         
         if(id) {
             const idx = membros.findIndex(m => m.id === parseInt(id));
