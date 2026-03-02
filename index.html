@@ -3,76 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AD Belém - Manager</title>
+    <title>AD Belém - Manager Pro</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="AD Belém">
     <link rel="apple-touch-icon" href="logo.jpg">
     <link rel="icon" type="image/jpg" href="logo.jpg">
     <meta name="theme-color" content="#0e3a5d">
 
     <style>
         :root { --primary: #0e3a5d; --accent: #27ae60; --warning: #f39c12; --danger: #e74c3c; --bg: #f0f2f5; --card-bg: #ffffff; --text-main: #2d3436; --text-sub: #636e72; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0 0 80px 0; color: var(--text-main); }
-        header { background: var(--primary); color: white; padding: 25px 15px; text-align: center; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; margin-top: -15px; }
-        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .stat-card b { font-size: 1.5em; display: block; color: var(--primary); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0 0 90px 0; color: var(--text-main); overflow-x: hidden; }
+        
+        /* Header & Stats */
+        header { background: var(--primary); color: white; padding: 25px 15px 40px; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; margin-top: -25px; }
+        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 18px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .stat-card b { font-size: 1.6em; display: block; color: var(--primary); }
         .stat-card small { color: var(--text-sub); text-transform: uppercase; font-size: 0.7em; font-weight: bold; }
-        .action-bar { padding: 0 15px 15px 15px; display: flex; gap: 10px; }
-        .search-box { flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; outline: none; }
-        .btn-fab { background: var(--accent); color: white; border: none; width: 50px; height: 50px; border-radius: 15px; font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(39,174, 96, 0.3); }
+
+        /* Filtros e Busca */
+        .search-area { padding: 15px; }
+        .search-box { width: 100%; padding: 14px 18px; border: 1px solid #ddd; border-radius: 15px; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .filter-bar { display: flex; gap: 8px; overflow-x: auto; padding: 0 15px 15px; scrollbar-width: none; }
+        .filter-bar::-webkit-scrollbar { display: none; }
+        .chip { background: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; white-space: nowrap; border: 1px solid #ddd; color: var(--text-sub); }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* Lista de Membros */
         .member-list { padding: 0 15px; }
-        .member-card { background: var(--card-bg); border-radius: 18px; padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 6px solid transparent; }
+        .member-card { background: var(--card-bg); border-radius: 20px; padding: 18px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 6px solid transparent; animation: slideIn 0.3s ease; }
         .member-card.is-niver { border-left-color: var(--warning); background: #fffdf2; }
-        .member-info h4 { margin: 0 0 4px 0; font-size: 16px; color: var(--primary); }
-        .member-info p { margin: 0; font-size: 13px; color: var(--text-sub); }
-        .member-actions { display: flex; gap: 8px; }
-        .action-btn { padding: 10px 14px; border-radius: 10px; border: none; font-size: 12px; font-weight: bold; }
-        .edit-btn { background: #f1f3f5; color: #495057; }
-        .wa-btn { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-        .time-badge { font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: bold; margin-top: 6px; display: inline-block; }
-        .urgent { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; padding: 15px 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.08); z-index: 1000; border-top-left-radius: 20px; border-top-right-radius: 20px; }
-        .nav-item { flex: 1; text-align: center; border: none; background: none; color: var(--text-sub); font-size: 12px; font-weight: bold; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Ações */
+        .member-actions { display: flex; gap: 10px; }
+        .btn-circle { width: 40px; height: 40px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s; }
+        .btn-edit { background: #f1f3f5; color: #495057; }
+        .btn-wa { background: #dcfce7; color: #166534; }
+
+        /* Navegação Inferior */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; padding: 12px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 1000; border-top-left-radius: 25px; border-top-right-radius: 25px; }
+        .nav-item { flex: 1; text-align: center; border: none; background: none; color: var(--text-sub); font-size: 10px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-item i { font-size: 20px; }
         .nav-item.active { color: var(--primary); }
-        #form-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; z-index: 2000; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-        .modal-content { background: white; border-radius: 25px; padding: 25px; width: 100%; max-width: 420px; }
-        .modal-content input, .modal-content select { width: 100%; margin-bottom: 15px; padding: 14px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; background: #f9f9f9; }
+
+        /* Modais */
+        .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; z-index: 2000; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal { background: white; border-radius: 25px; padding: 25px; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
+        .modal h3 { margin-top: 0; color: var(--primary); }
+        input, select, textarea { width: 100%; margin-bottom: 15px; padding: 14px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; background: #f9f9f9; }
+        
+        /* Botão Flutuante */
+        .fab { position: fixed; bottom: 85px; right: 20px; width: 60px; height: 60px; background: var(--accent); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 20px rgba(39,174,96,0.3); z-index: 999; border: none; }
+
+        /* Toast Feedback */
+        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 25px; border-radius: 30px; font-size: 14px; opacity: 0; transition: 0.3s; z-index: 3000; pointer-events: none; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-size: 0.7em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; opacity: 0.9;">Ministério de Comunicação</div>
-    <h2 style="margin: 0;">AD Belém Manager</h2>
+    <div style="font-size: 0.8em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; opacity: 0.8;">AD BELÉM</div>
+    <h2 style="margin: 0;">Manager Pro</h2>
 </header>
 
 <div class="stats-grid">
     <div class="stat-card"><b id="dash-total">0</b><small>Membros</small></div>
-    <div class="stat-card"><b id="dash-niver" style="color: var(--warning);">0</b><small>No Mês</small></div>
+    <div class="stat-card"><b id="dash-niver" style="color: var(--warning);">0</b><small>Nivers Mes</small></div>
 </div>
 
-<div class="action-bar">
-    <input type="text" id="buscaNome" class="search-box" placeholder="Buscar irmão(ã)..." onkeyup="filtrar()">
-    <button class="btn-fab" onclick="abrirForm()">+</button>
+<div id="view-membros">
+    <div class="search-area">
+        <input type="text" id="buscaNome" class="search-box" placeholder="Procurar irmão(ã)..." onkeyup="filtrar()">
+    </div>
+
+    <div class="filter-bar" id="filter-bar">
+        <div class="chip active" onclick="filtrarCargo('Todos', this)">Todos</div>
+        <div class="chip" onclick="filtrarCargo('Pastor', this)">Pastores</div>
+        <div class="chip" onclick="filtrarCargo('Presbítero', this)">Presbíteros</div>
+        <div class="chip" onclick="filtrarCargo('Diácono', this)">Diáconos</div>
+        <div class="chip" onclick="filtrarCargo('Cooperador', this)">Obreiros</div>
+        <div class="chip" onclick="filtrarCargo('Membro', this)">Membros</div>
+    </div>
+
+    <div id="lista-membros" class="member-list"></div>
 </div>
 
-<div id="lista-membros" class="member-list"></div>
+<div id="view-visitantes" style="display: none; padding: 20px;">
+    <h3 style="color: var(--primary);">Novo Visitante</h3>
+    <input type="text" id="v_nome" placeholder="Nome do Visitante">
+    <input type="tel" id="v_tel" placeholder="WhatsApp do Visitante">
+    <textarea id="v_obs" placeholder="Observações (Pedido de oração, quem convidou...)" rows="4"></textarea>
+    <button onclick="enviarVisitante()" style="background: var(--accent); color: white; width: 100%; padding: 18px; border-radius: 15px; border:none; font-weight:bold; font-size:16px;">ENVIAR PARA SECRETARIA (ZAP)</button>
+    <div style="margin-top: 30px; background: #fff; padding: 15px; border-radius: 15px; font-size: 13px; color: var(--text-sub);">
+        <b>Dica:</b> Os dados dos visitantes não ficam salvos no banco de dados fixo, são enviados diretamente via WhatsApp para evitar acúmulo de dados temporários.
+    </div>
+</div>
+
+<div id="view-config" style="display: none; padding: 20px;">
+    <h3 style="color: var(--primary);">Segurança e Dados</h3>
+    <button onclick="exportarBackup()" style="background: #fff; color: var(--primary); width: 100%; padding: 15px; border-radius: 12px; border:1px solid var(--primary); font-weight:bold; margin-bottom:15px; display: flex; align-items: center; justify-content: center; gap: 10px;">💾 Exportar Backup (Arquivo)</button>
+    <button onclick="resetarDados()" style="background: #fff0f0; color: var(--danger); width: 100%; padding: 15px; border-radius: 12px; border:1px solid var(--danger); font-size: 12px;">⚠️ Restaurar Banco de Dados Original</button>
+</div>
+
+<button class="fab" id="main-fab" onclick="abrirForm()">+</button>
 
 <nav class="bottom-nav">
-    <button class="nav-item active" onclick="mudarAba('geral', this)">👥 LISTA GERAL</button>
-    <button class="nav-item" onclick="mudarAba('niver', this)">🎂 ANIVERSÁRIOS</button>
+    <button class="nav-item active" onclick="mudarView('membros', this)"><i>👥</i>LISTA</button>
+    <button class="nav-item" onclick="mudarView('niver', this)"><i>🎂</i>NIVERS</button>
+    <button class="nav-item" onclick="mudarView('visitantes', this)"><i>🤝</i>VISITAS</button>
+    <button class="nav-item" onclick="mudarView('config', this)"><i>⚙️</i>AJUSTES</button>
 </nav>
 
-<div id="form-overlay">
-    <div class="modal-content">
-        <h3 id="form-titulo">Ficha do Membro</h3>
+<div id="form-overlay" class="overlay">
+    <div class="modal">
+        <h3 id="form-titulo">Cadastro de Membro</h3>
         <input type="hidden" id="f_id">
-        <input type="text" id="f_nome" placeholder="Nome Completo">
+        <label><small>Nome Completo</small></label>
+        <input type="text" id="f_nome">
+        <label><small>Data de Nascimento</small></label>
         <input type="date" id="f_data">
+        <label><small>Cargo / Função</small></label>
         <select id="f_cargo">
             <option value="Membro">Membro</option>
             <option value="Congregado">Congregado(a)</option>
@@ -82,12 +135,16 @@
             <option value="Evangelista">Evangelista</option>
             <option value="Pastor">Pastor</option>
         </select>
-        <input type="tel" id="f_telefone" placeholder="WhatsApp (DDD + Número)">
-        <button onclick="salvar()" style="background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 12px; border:none; font-weight:bold; font-size: 16px; margin-bottom:12px">GRAVAR</button>
-        <button onclick="fecharForm()" style="background: #eee; width: 100%; padding: 14px; border-radius: 12px; border:none; color: #666;">FECHAR</button>
-        <button onclick="resetarDados()" style="background: none; color: var(--danger); width: 100%; padding: 10px; border:none; font-size:11px; margin-top:20px; text-decoration: underline;">Restaurar Lista Original</button>
+        <label><small>WhatsApp (Opcional)</small></label>
+        <input type="tel" id="f_telefone" placeholder="199XXXXXXXX">
+        
+        <button onclick="salvar()" style="background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 15px; border:none; font-weight:bold; font-size:16px; margin-bottom:10px">SALVAR MEMBRO</button>
+        <button onclick="fecharForm()" style="background: #eee; width: 100%; padding: 14px; border-radius: 15px; border:none; color: #666; font-weight:bold;">CANCELAR</button>
+        <button onclick="excluirMembro()" id="btn-excluir" style="display:none; background:none; color:var(--danger); width:100%; margin-top:15px; border:none; font-size:11px; text-decoration:underline;">Excluir este cadastro</button>
     </div>
 </div>
+
+<div id="toast">Ação realizada!</div>
 
 <script>
     const backupMembros = [
@@ -125,32 +182,15 @@
         {id: 33, nome: "ELISANGELA SILVEIRA", data: "2000-12-27", cargo: "Membro", tel: ""}
     ];
 
-    const frasesParabens = [
-        "Paz do Senhor! Passando para parabenizar o(a) {cargo} {primeiro_nome} por mais um ano de vida! 🎂🎈 Que o Senhor continue abençoando sua caminhada e ministério! 🙌✨",
-        "Parabéns e a Paz do Senhor, {cargo} {primeiro_nome}! ✨🙏 Que as ricas bênçãos de Deus sejam derramadas sobre sua vida hoje e sempre! Feliz aniversário! 🎊📖",
-        "Glória a Deus pela vida do(a) {cargo} {primeiro_nome}! 🎈🙌 Desejamos um dia cheio de graça e alegria. Que o Espírito Santo te guie em cada passo! 🕊️🎂",
-        "Paz do Senhor, {cargo} {primeiro_nome}! 🔥📖 Passando para desejar um feliz aniversário! Que o Senhor Jesus renove suas forças e te use poderosamente! 🎊🙌",
-        "Feliz aniversário, {cargo} {primeiro_nome}! 🎂✨ Que a boa mão do Senhor esteja sobre ti, trazendo saúde e muita paz! Parabéns pelo seu dia! 🎈🙏"
-    ];
+    let membros = JSON.parse(localStorage.getItem("church_pro_db")) || backupMembros;
+    let abaFiltro = 'Todos';
+    let viewAtiva = 'membros';
 
-    let membros = JSON.parse(localStorage.getItem("church_db_v3_final")) || backupMembros;
-    let abaAtual = 'geral';
-
-    function calcularProximoNiver(dataNasc) {
-        const hoje = new Date();
-        const [ano, mes, dia] = dataNasc.split('-').map(Number);
-        let dataNiver = new Date(hoje.getFullYear(), mes - 1, dia);
-        if (dataNiver < hoje.setHours(0,0,0,0)) dataNiver.setFullYear(hoje.getFullYear() + 1);
-        return Math.ceil((dataNiver - new Date().setHours(0,0,0,0)) / (1000 * 60 * 60 * 24));
-    }
-
-    function enviarParabens(nomeCompleto, cargo) {
-        let primeiroNome = nomeCompleto.split(' ')[0];
-        primeiroNome = primeiroNome.charAt(0).toUpperCase() + primeiroNome.slice(1).toLowerCase();
-        const msg = frasesParabens[Math.floor(Math.random() * frasesParabens.length)]
-                    .replace("{primeiro_nome}", "*" + primeiroNome + "*")
-                    .replace("{cargo}", cargo);
-        window.open(`https://wa.me/5519982839701?text=${encodeURIComponent(msg)}`, '_blank');
+    function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.innerText = msg;
+        t.style.opacity = "1";
+        setTimeout(() => t.style.opacity = "0", 2500);
     }
 
     function renderizar() {
@@ -160,7 +200,10 @@
         let niverMesCount = 0;
 
         let exibir = [...membros];
-        if(abaAtual === 'niver') {
+        
+        if(abaFiltro !== 'Todos') exibir = exibir.filter(m => m.cargo === abaFiltro);
+        
+        if(viewAtiva === 'niver') {
             exibir = exibir.map(m => ({...m, diasPara: calcularProximoNiver(m.data)})).sort((a,b) => a.diasPara - b.diasPara);
         } else {
             exibir.sort((a,b) => a.nome.localeCompare(b.nome));
@@ -170,30 +213,97 @@
             const [ano, mes, dia] = m.data.split('-');
             if(mes === mesAtual) niverMesCount++;
             const diasPara = calcularProximoNiver(m.data);
+            
             const card = document.createElement("div");
             card.className = `member-card ${mes === mesAtual ? 'is-niver' : ''}`;
-            card.innerHTML = `<div class="member-info"><h4>${m.nome}</h4><p>${m.cargo} • ${dia}/${mes}</p>${abaAtual === 'niver' ? `<span class="time-badge ${diasPara <= 7 ? 'urgent' : ''}">${diasPara === 0 ? 'HOJE 🎉' : 'Faltam ' + diasPara + ' dias'}</span>` : ''}</div><div class="member-actions"><button class="action-btn edit-btn" onclick="editar(${m.id})">Editar</button><button class="action-btn wa-btn" onclick="enviarParabens('${m.nome}', '${m.cargo}')">ZAP</button></div>`;
+            card.innerHTML = `
+                <div class="member-info">
+                    <h4>${m.nome}</h4>
+                    <p>${m.cargo} • ${dia}/${mes}</p>
+                    ${viewAtiva === 'niver' ? `<span class="time-badge ${diasPara <= 7 ? 'urgent' : ''}">${diasPara === 0 ? 'HOJE 🎉' : 'Faltam ' + diasPara + ' dias'}</span>` : ''}
+                </div>
+                <div class="member-actions">
+                    <button class="btn-circle btn-edit" onclick="editar(${m.id})">✎</button>
+                    <button class="btn-circle btn-wa" onclick="enviarZap('${m.nome}', '${m.cargo}', '${m.tel}')">Z</button>
+                </div>
+            `;
             lista.appendChild(card);
         });
 
         document.getElementById("dash-total").innerText = membros.length;
         document.getElementById("dash-niver").innerText = niverMesCount;
-        localStorage.setItem("church_db_v3_final", JSON.stringify(membros));
+        localStorage.setItem("church_pro_db", JSON.stringify(membros));
     }
 
-    function resetarDados() { if(confirm("Restaurar lista original?")) { membros = backupMembros; renderizar(); fecharForm(); } }
-    function mudarAba(aba, btn) { abaAtual = aba; document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderizar(); }
-    function abrirForm() { document.getElementById("form-overlay").style.display = "flex"; }
-    function fecharForm() { document.getElementById("form-overlay").style.display = "none"; document.getElementById("f_id").value = ""; }
+    function calcularProximoNiver(dataNasc) {
+        const hoje = new Date();
+        const [ano, mes, dia] = dataNasc.split('-').map(Number);
+        let dataNiver = new Date(hoje.getFullYear(), mes - 1, dia);
+        if (dataNiver < hoje.setHours(0,0,0,0)) dataNiver.setFullYear(hoje.getFullYear() + 1);
+        return Math.ceil((dataNiver - new Date().setHours(0,0,0,0)) / (1000 * 60 * 60 * 24));
+    }
+
+    function mudarView(view, btn) {
+        viewAtiva = view;
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        document.getElementById("view-membros").style.display = (view === 'membros' || view === 'niver') ? "block" : "none";
+        document.getElementById("view-visitantes").style.display = (view === 'visitantes') ? "block" : "none";
+        document.getElementById("view-config").style.display = (view === 'config') ? "block" : "none";
+        document.getElementById("main-fab").style.display = (view === 'membros' || view === 'niver') ? "flex" : "none";
+        
+        renderizar();
+    }
+
+    function filtrarCargo(cargo, el) {
+        abaFiltro = cargo;
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        renderizar();
+    }
+
+    function enviarZap(nome, cargo, tel) {
+        let n = nome.split(' ')[0];
+        n = n.charAt(0).toUpperCase() + n.slice(1).toLowerCase();
+        const msg = `Paz do Senhor, ${cargo} ${n}! 🎂 Passando para desejar um feliz aniversário! Que Deus te abençoe poderosamente! 🙌`;
+        const link = tel ? `https://wa.me/55${tel}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        window.open(link, '_blank');
+    }
+
+    function abrirForm() { 
+        document.getElementById("form-overlay").style.display = "flex"; 
+        document.getElementById("btn-excluir").style.display = "none";
+    }
+    
+    function fecharForm() { 
+        document.getElementById("form-overlay").style.display = "none"; 
+        document.getElementById("f_id").value = ""; 
+        document.getElementById("f_nome").value = "";
+    }
 
     function salvar() {
         const id = document.getElementById("f_id").value;
-        const nomeIn = document.getElementById("f_nome").value;
-        const dataIn = document.getElementById("f_data").value;
-        if(!nomeIn || !dataIn) return alert("Preencha nome e data!");
-        const novo = { id: id ? parseInt(id) : Date.now(), nome: nomeIn.toUpperCase(), data: dataIn, cargo: document.getElementById("f_cargo").value, tel: document.getElementById("f_telefone").value.replace(/\D/g,'') };
-        if(id) { const idx = membros.findIndex(m => m.id === parseInt(id)); membros[idx] = novo; } else { membros.push(novo); }
-        renderizar(); fecharForm();
+        const nome = document.getElementById("f_nome").value.toUpperCase();
+        const data = document.getElementById("f_data").value;
+        if(!nome || !data) return alert("Preencha Nome e Data!");
+
+        const novo = {
+            id: id ? parseInt(id) : Date.now(),
+            nome: nome,
+            data: data,
+            cargo: document.getElementById("f_cargo").value,
+            tel: document.getElementById("f_telefone").value.replace(/\D/g,'')
+        };
+
+        if(id) {
+            const idx = membros.findIndex(m => m.id === parseInt(id));
+            membros[idx] = novo;
+        } else { membros.push(novo); }
+        
+        renderizar();
+        fecharForm();
+        showToast("Dados salvos com sucesso! ✅");
     }
 
     function editar(id) {
@@ -202,15 +312,35 @@
         document.getElementById("f_nome").value = m.nome;
         document.getElementById("f_data").value = m.data;
         document.getElementById("f_cargo").value = m.cargo;
-        document.getElementById("f_telefone").value = m.tel;
+        document.getElementById("f_telefone").value = m.tel || "";
+        document.getElementById("btn-excluir").style.display = "block";
         abrirForm();
     }
 
-    function filtrar() {
-        const t = document.getElementById("buscaNome").value.toLowerCase();
-        document.querySelectorAll(".member-card").forEach(c => c.style.display = c.innerText.toLowerCase().includes(t) ? "flex" : "none");
+    function excluirMembro() {
+        if(confirm("Tem certeza que deseja excluir este membro?")) {
+            const id = parseInt(document.getElementById("f_id").value);
+            membros = membros.filter(m => m.id !== id);
+            renderizar();
+            fecharForm();
+            showToast("Membro removido! 🗑️");
+        }
     }
-    window.onload = renderizar;
-</script>
-</body>
-</html>
+
+    function enviarVisitante() {
+        const nome = document.getElementById("v_nome").value;
+        const tel = document.getElementById("v_tel").value;
+        const obs = document.getElementById("v_obs").value;
+        if(!nome) return alert("Pelo menos o nome é necessário!");
+        
+        const texto = `📌 *NOVO VISITANTE - AD BELÉM*\n\n*Nome:* ${nome}\n*WhatsApp:* ${tel}\n*Obs:* ${obs}`;
+        window.open(`https://wa.me/5519982839701?text=${encodeURIComponent(texto)}`, '_blank');
+        
+        document.getElementById("v_nome").value = "";
+        document.getElementById("v_tel").value = "";
+        document.getElementById("v_obs").value = "";
+        showToast("Visitante enviado! 🕊️");
+    }
+
+    function exportarBackup() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComp
