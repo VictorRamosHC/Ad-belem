@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AD Belém Manager</title>
+
+  <!-- PWA Meta -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#0A0A0A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AD Belém">
+
+  <!-- Favicon com logo -->
+  <link rel="icon" type="image/jpeg" href="./logo.jpg">
+  <link rel="apple-touch-icon" href="./logo.jpg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary:    #0A0A0A;
+      --bg-secondary:  #141414;
+      --bg-tertiary:   #1E1E1E;
+      --bg-hover:      #262626;
+      --text-primary:  #F5F5F5;
+      --text-secondary:#D1D1D1;
+      --text-tertiary: #8B8B8B;
+      --accent-gold:   #FFB800;
+      --accent-gold-dark: #D99E00;
+      --accent-electric: #00D9FF;
+      --accent-electric-dark: #00A8CC;
+      --accent-violet: #9D4EDD;
+      --accent-violet-dark: #7B2CBF;
+      --accent-green:  #25D366;
+      --accent-green-dark: #128C7E;
+      --danger:        #FF4757;
+      --danger-dark:   #EE5A6F;
+      --shadow-sm:     0 2px 8px rgba(0, 0, 0, 0.4);
+      --shadow-md:     0 4px 16px rgba(0, 0, 0, 0.5);
+      --shadow-lg:     0 8px 32px rgba(0, 0, 0, 0.6);
+      --radius:        14px;
+      --radius-sm:     10px;
+      --radius-lg:     20px;
+      --transition:    all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent; 
+      margin: 0; 
+      padding: 0; 
+    }
+
+    body {
+      font-family: 'Nunito', system-ui, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding-bottom: 100px;
+      line-height: 1.6;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+      padding: 24px 20px 70px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: var(--transition);
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: var(--bg-primary);
+      border-radius: 40px 40px 0 0;
+    }
+
+    .header-bg {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 80% 20%, rgba(0, 217, 255, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 10% 80%, rgba(157, 78, 221, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .header-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid var(--accent-electric);
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+      transition: var(--transition);
+    }
+
+    .logo-img:hover {
+      box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+    }
+
+    .header-text small {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-electric);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .header-text h1 {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      margin-top: 4px;
+    }
+
+    #btn-install {
+      margin-left: auto;
+      background: linear-gradient(135deg, var(--accent-electric), var(--accent-electric-dark));
+      color: var(--bg-primary);
+      border: none;
+      padding: 10px 16px;
+      border-radius: 24px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(0, 217, 255, 0.3);
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+
+    #btn-install.show {
+      display: flex;
+    }
+
+    #btn-install:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 8px rgba(0, 217, 255, 0.2);
+    }
+
+    #btn-install svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== STATS ===== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      padding: 16px 16px 0;
+      margin-top: -42px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(0, 217, 255, 0.1), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      border-color: rgba(0, 217, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+
+    .stat-card b {
+      display: block;
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--accent-electric);
+      margin-bottom: 8px;
+    }
+
+    .stat-card small {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ===== SEARCH BAR ===== */
+    .search-wrap {
+      padding: 16px 16px 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      background: var(--bg-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      color: var(--text-primary);
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .search-box::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .search-box:focus {
+      border-color: var(--accent-electric);
+      background: var(--bg-tertiary);
+      box-shadow: 0 0 12px rgba(0, 217, 255, 0.2);
+    }
+
+    .btn-add {
+      background: linear-gradient(135deg, var(--accent-violet), var(--accent-violet-dark));
+      color: #fff;
+      border: none;
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius);
+      font-size: 26px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(157, 78, 221, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-add::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .btn-add:active {
+      transform: scale(0.92);
+      box-shadow: 0 3px 10px rgba(157, 78, 221, 0.25);
+    }
+
+    .btn-add:hover::before {
+      opacity: 1;
+    }
+
+    /* ===== MEMBER CARD ===== */
+    .member-list {
+      padding: 6px 16px 12px;
+    }
+
+    .member-card {
+      background: var(--bg-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .member-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: transparent;
+      transition: var(--transition);
+    }
+
+    .member-card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      background: var(--bg-tertiary);
+      transform: translateX(4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .member-card.is-niver {
+      border-left: 4px solid var(--accent-gold);
+      background: linear-gradient(90deg, rgba(255, 184, 0, 0.08), var(--bg-secondary));
+    }
+
+    .member-card.is-niver::before {
+      background: var(--accent-gold);
+      width: 4px;
+    }
+
+    .member-card:active {
+      transform: scale(0.98);
+    }
+
+    .member-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+      color: #fff;
+      flex-shrink: 0;
+      margin-right: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: var(--transition);
+    }
+
+    .member-card:hover .member-avatar {
+      transform: scale(1.08);
+    }
+
+    .member-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .member-info h4 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .member-info p {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .member-info .cargo-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(0, 217, 255, 0.12);
+      color: var(--accent-electric);
+      border-radius: 6px;
+      padding: 3px 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      transition: var(--transition);
+    }
+
+    .member-info .cargo-badge.cargo-lider {
+      background: rgba(255, 184, 0, 0.12);
+      color: var(--accent-gold);
+      border-color: rgba(255, 184, 0, 0.2);
+    }
+
+    .time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-top: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-tertiary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: var(--transition);
+    }
+
+    .time-badge.urgent {
+      background: rgba(255, 184, 0, 0.15);
+      color: var(--accent-gold);
+      border-color: rgba(255, 184, 0, 0.3);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .member-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-left: 12px;
+    }
+
+    .btn-action {
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 8px 12px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-action::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .btn-action:active {
+      transform: scale(0.92);
+    }
+
+    .btn-action:hover::before {
+      opacity: 1;
+    }
+
+    .btn-edit {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-edit:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-zap {
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-green-dark));
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+      border: none;
+    }
+
+    .btn-zap:hover {
+      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
+    }
+
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      padding: 10px;
+      border-radius: 28px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+    }
+
+    .nav-item {
+      flex: 1;
+      color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 12px 8px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      letter-spacing: 0.5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      transition: var(--transition);
+    }
+
+    .nav-item:active {
+      transform: scale(0.95);
+    }
+
+    .nav-item.active {
+      background: rgba(0, 217, 255, 0.15);
+      color: var(--accent-electric);
+      box-shadow: inset 0 0 12px rgba(0, 217, 255, 0.1);
+    }
+
+    .nav-item.active svg {
+      filter: drop-shadow(0 0 4px rgba(0, 217, 255, 0.4));
+    }
+
+    /* ===== SECTION HEADER ===== */
+    .section-label {
+      padding: 10px 16px 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      transition: var(--transition);
+    }
+
+    /* ===== MODAL ===== */
+    #form-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 15, 25, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center;
+      animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-sheet {
+      background: linear-gradient(160deg, var(--bg-secondary), var(--bg-tertiary));
+      border-radius: 28px 28px 0 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 32px 24px 48px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.8);
+      animation: slideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-handle {
+      width: 44px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      margin: 0 auto 28px;
+      display: block;
+      transition: var(--transition);
+    }
+
+    .modal-sheet h3 {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      letter-spacing: -0.5px;
+    }
+
+    .modal-sheet input,
+    .modal-sheet select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      color: var(--text-primary);
+      outline: none;
+      margin-bottom: 12px;
+      transition: var(--transition);
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .modal-sheet input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .modal-sheet input:focus,
+    .modal-sheet select:focus {
+      border-color: var(--accent-electric);
+      background: rgba(0, 217, 255, 0.05);
+      box-shadow: 0 0 12px rgba(0, 217, 255, 0.15);
+    }
+
+    .modal-sheet select option {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .btn-save {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-violet), var(--accent-violet-dark));
+      color: #fff;
+      border: none;
+      padding: 16px;
+      border-radius: var(--radius);
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 20px rgba(157, 78, 221, 0.3);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-save::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .btn-save:active {
+      transform: scale(0.97);
+      box-shadow: 0 3px 10px rgba(157, 78, 221, 0.2);
+    }
+
+    .btn-save:hover::before {
+      opacity: 1;
+    }
+
+    .btn-cancel {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 14px;
+      border-radius: var(--radius);
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-cancel:active {
+      transform: scale(0.97);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-danger {
+      width: 100%;
+      background: rgba(255, 71, 87, 0.1);
+      color: rgba(255, 71, 87, 0.8);
+      border: 1px solid rgba(255, 71, 87, 0.2);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif;
+      font-size: 11px;
+      cursor: pointer;
+      margin-top: 14px;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+
+    .btn-danger:active {
+      transform: scale(0.97);
+      background: rgba(255, 71, 87, 0.15);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-tertiary);
+    }
+
+    .empty-state svg {
+      width: 52px;
+      height: 52px;
+      opacity: 0.4;
+      margin-bottom: 14px;
+      stroke: currentColor;
+    }
+
+    .empty-state p {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-bg"></div>
+  <div class="header-inner">
+    <img class="logo-img" src="./logo.jpg" alt="AD Belém">
+    <div class="header-text">
+      <small>Assembleia de Deus</small>
+      <h1>AD Belém Manager</h1>
+    </div>
+    <button id="btn-install" onclick="instalarPWA()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M12 16V4M8 12l4 4 4-4M4 20h16"/>
+      </svg>
+      Instalar
+    </button>
+  </div>
+</header>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <b id="dash-total">0</b>
+    <small>Membros</small>
+  </div>
+  <div class="stat-card">
+    <b id="dash-niver" style="color:var(--accent-gold)">0</b>
+    <small>🎂 No Mês</small>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <input type="text" id="buscaNome" class="search-box" placeholder="🔍  Buscar membro...">
+  <button class="btn-add" onclick="abrirForm()" title="Novo membro">+</button>
+</div>
+
+<div class="section-label" id="lista-label">LISTA</div>
+<div id="lista-membros" class="member-list"></div>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" id="nav-geral" onclick="mudarAba('geral', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.85"/>
+    </svg>
+    LISTA
+  </button>
+  <button class="nav-item" id="nav-niver" onclick="mudarAba('niver', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      <path d="M12 2v2M8 3l1 2M16 3l-1 2"/>
+    </svg>
+    NIVERS
+  </button>
+</nav>
+
+<!-- MODAL -->
+<div id="form-overlay">
+  <div class="modal-sheet">
+    <span class="modal-handle"></span>
+    <h3 id="form-titulo">✨ Novo Cadastro</h3>
+    <input type="hidden" id="f_id">
+    <input type="text" id="f_nome" placeholder="Nome Completo">
+    <input type="date" id="f_data">
+    <select id="f_cargo">
+      <option value="Membro">Membro</option>
+      <option value="Congregado">Congregado(a)</option>
+      <option value="Cooperador">Cooperador(a)</option>
+      <option value="Diácono">Diácono(isa)</option>
+      <option value="Presbítero">Presbítero(a)</option>
+      <option value="Evangelista">Evangelista</option>
+      <option value="Pastor">Pastor(a)</option>
+    </select>
+    <input type="tel" id="f_telefone" placeholder="WhatsApp (ex: 19982839701)">
+    <button class="btn-save" onclick="salvar()">SALVAR</button>
+    <button class="btn-cancel" onclick="fecharForm()">CANCELAR</button>
+    <button class="btn-danger" onclick="resetarDados()">Apagar tudo e reiniciar</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DADOS
+// ============================================================
+const backupMembros = [
+  {id:1,  nome:"ANDRESSA APARECIDA",       data:"1999-01-01", cargo:"Membro",     tel:""},
+  {id:2,  nome:"JESSICA SOUZA",             data:"1999-01-25", cargo:"Membro",     tel:""},
+  {id:3,  nome:"PRISCILA BARROSO",          data:"2000-01-25", cargo:"Membro",     tel:""},
+  {id:4,  nome:"NATALINO BARROSO",          data:"1965-01-25", cargo:"Membro",     tel:""},
+  {id:5,  nome:"SABRINA CARVALHO",          data:"1999-02-10", cargo:"Membro",     tel:""},
+  {id:6,  nome:"LUANA BATISTA",             data:"1997-02-20", cargo:"Membro",     tel:""},
+  {id:7,  nome:"JEFERSON BATISTA",          data:"1996-02-20", cargo:"Membro",     tel:""},
+  {id:8,  nome:"VICTOR HUGO",               data:"2008-02-29", cargo:"Membro",     tel:""},
+  {id:9,  nome:"FERNANDA DE OLIVEIRA",      data:"1997-03-05", cargo:"Membro",     tel:""},
+  {id:10, nome:"ALAN QUEIROZ DO MONTE",     data:"2001-03-08", cargo:"Membro",     tel:""},
+  {id:11, nome:"ISABELLE GRANADA",          data:"2008-03-14", cargo:"Membro",     tel:""},
+  {id:12, nome:"GINAUSIO CORREIA MENEZES",  data:"1960-04-01", cargo:"Membro",     tel:""},
+  {id:13, nome:"MARIANA",                   data:"1998-04-01", cargo:"Membro",     tel:""},
+  {id:14, nome:"JUNIOR DE OLIVEIRA",        data:"1988-04-12", cargo:"Membro",     tel:""},
+  {id:15, nome:"ENZO GABRIEL",              data:"2021-04-14", cargo:"Membro",     tel:""},
+  {id:16, nome:"MARIA DA CRUZ CONCEIÇÃO",   data:"1969-05-03", cargo:"Membro",     tel:""},
+  {id:17, nome:"CREUZA QUINTELA DA SILVA",  data:"1956-05-08", cargo:"Membro",     tel:""},
+  {id:19, nome:"APARECIDA CARDOSO QUINTELA",data:"1935-05-22", cargo:"Membro",     tel:""},
+  {id:20, nome:"CRISTINA",                  data:"1975-06-25", cargo:"Membro",     tel:""},
+  {id:21, nome:"OZIEL DA FONSECA",          data:"1976-06-05", cargo:"Membro",     tel:""},
+  {id:22, nome:"JOSELMA QUEIROZ DO MONTE",  data:"1969-06-12", cargo:"Membro",     tel:""},
+  {id:23, nome:"MAYCON APARECIDO CARVALHO", data:"1992-06-19", cargo:"Membro",     tel:""},
+  {id:24, nome:"PEDRO HENRIQUE",            data:"2007-06-15", cargo:"Membro",     tel:""},
+  {id:25, nome:"ADONIAS QUEIROZ DO MONTE",  data:"1995-07-05", cargo:"Membro",     tel:""},
+  {id:26, nome:"NATALINO GERMANO",          data:"1965-08-30", cargo:"Membro",     tel:""},
+  {id:27, nome:"ISAQUE GRANADA",            data:"2008-09-13", cargo:"Membro",     tel:""},
+  {id:28, nome:"EDERLEI APARECIDO",         data:"1980-09-25", cargo:"Membro",     tel:""},
+  {id:29, nome:"APARECIDA DE OLIVEIRA",     data:"1950-10-03", cargo:"Membro",     tel:""},
+  {id:30, nome:"MANOELINA FUZATO",          data:"1937-10-03", cargo:"Membro",     tel:""},
+  {id:31, nome:"APARECIDA GRANADA",         data:"1970-10-22", cargo:"Membro",     tel:""},
+  {id:32, nome:"JANAINA",                   data:"1999-11-27", cargo:"Membro",     tel:""},
+  {id:33, nome:"ELISANGELA SILVEIRA",       data:"2000-12-27", cargo:"Membro",     tel:""}
+];
+
+const frasesParabens = [
+  "Paz do Senhor! Passando para parabenizar o(a) {cargo} {primeiro_nome} por mais um ano de vida! 🎂🎈 Que o Senhor continue abençoando sua caminhada!",
+  "Parabéns e a Paz do Senhor, {cargo} {primeiro_nome}! ✨🙏 Que as ricas bênçãos de Deus sejam derramadas sobre sua vida hoje e sempre!",
+  "Glória a Deus pela vida do(a) {cargo} {primeiro_nome}! 🎈🙌 Desejamos um dia cheio de graça e alegria. Feliz aniversário!",
+  "Paz do Senhor, {cargo} {primeiro_nome}! 🔥📖 Passando para desejar um feliz aniversário! Que o Senhor Jesus renove suas forças!",
+  "Feliz aniversário, {cargo} {primeiro_nome}! 🎂✨ Que a boa mão do Senhor esteja sobre ti, trazendo saúde e muita paz!"
+];
+
+const CARGOS_LIDER = ["Diácono","Presbítero","Evangelista","Pastor"];
+
+let membros = JSON.parse(localStorage.getItem("church_db_v3")) || backupMembros;
+let abaAtual = 'geral';
+let notificacaoEnviadaHoje = false;
+
+// ============================================================
+// PWA
+// ============================================================
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('btn-install').classList.add('show');
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  document.getElementById('btn-install').classList.remove('show');
+});
+
+async function instalarPWA() {
+  if (!deferredPrompt) {
+    alert('Para instalar: use o menu do navegador → "Adicionar à tela inicial"');
+    return;
+  }
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  if (outcome === 'accepted') {
+    document.getElementById('btn-install').classList.remove('show');
+  }
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .then(() => console.log('✅ SW registrado'))
+    .catch(e => console.warn('SW:', e));
+}
+
+if (Notification.permission !== 'granted') {
+  Notification.requestPermission();
+}
+
+function verificarNotificacaoMatinal() {
+  const agora = new Date();
+  const hora = agora.getHours();
+  const minuto = agora.getMinutes();
+  const hojeData = agora.toDateString();
+  if (localStorage.getItem('ultima_notificacao_dia') !== hojeData) {
+    notificacaoEnviadaHoje = false;
+  }
+  if (hora === 7 && minuto <= 15 && !notificacaoEnviadaHoje) {
+    membros.forEach(m => {
+      const dias = calcularProximoNiver(m.data);
+      if (dias === 0 || dias === 1) {
+        const prefixo = dias === 0 ? "HOJE 🎉: " : "AMANHÃ 🎂: ";
+        new Notification("AD Belém - Aniversário", {
+          body: prefixo + m.nome,
+          icon: './logo.jpg'
+        });
+      }
+    });
+    notificacaoEnviadaHoje = true;
+    localStorage.setItem('ultima_notificacao_dia', hojeData);
+  }
+}
+setInterval(verificarNotificacaoMatinal, 30000);
+
+// ============================================================
+// LÓGICA
+// ============================================================
+function calcularProximoNiver(dataNasc) {
+  const hoje = new Date();
+  const [ano, mes, dia] = dataNasc.split('-').map(Number);
+  let dataNiver = new Date(hoje.getFullYear(), mes - 1, dia);
+  if (dataNiver < new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())) {
+    dataNiver.setFullYear(hoje.getFullYear() + 1);
+  }
+  const h = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  return Math.ceil((dataNiver - h) / (1000 * 60 * 60 * 24));
+}
+
+function getInitials(nome) {
+  const parts = nome.trim().split(' ').filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return nome.slice(0,2).toUpperCase();
+}
+
+function enviarParabens(nomeCompleto, cargo) {
+  let pn = nomeCompleto.split(' ')[0];
+  pn = pn.charAt(0).toUpperCase() + pn.slice(1).toLowerCase();
+  const msg = frasesParabens[Math.floor(Math.random() * frasesParabens.length)]
+    .replace('{primeiro_nome}', '*' + pn + '*')
+    .replace('{cargo}', cargo);
+  window.open('https://wa.me/5519982839701?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderizar() {
+  const lista = document.getElementById('lista-membros');
+  lista.innerHTML = '';
+  const mesAtual = (new Date().getMonth() + 1).toString().padStart(2, '0');
+  let niverMesCount = 0;
+
+  let exibir = [...membros];
+  if (abaAtual === 'niver') {
+    exibir = exibir.map(m => ({...m, diasPara: calcularProximoNiver(m.data)}))
+      .sort((a, b) => a.diasPara - b.diasPara);
+  } else {
+    exibir.sort((a, b) => a.nome.localeCompare(b.nome));
+  }
+
+  const termo = document.getElementById('buscaNome').value.toLowerCase();
+  if (termo) {
+    exibir = exibir.filter(m =>
+      m.nome.toLowerCase().includes(termo) ||
+      m.cargo.toLowerCase().includes(termo)
+    );
+  }
+
+  if (exibir.length === 0) {
+    lista.innerHTML = `
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <p>Nenhum membro encontrado</p>
+      </div>`;
+  }
+
+  exibir.forEach(m => {
+    const [ano, mes, dia] = m.data.split('-');
+    const isNiverMes = mes === mesAtual;
+    if (isNiverMes) niverMesCount++;
+    const diasPara = calcularProximoNiver(m.data);
+    const isLider = CARGOS_LIDER.includes(m.cargo);
+    const initials = getInitials(m.nome);
+
+    const card = document.createElement('div');
+    card.className = 'member-card' + (isNiverMes ? ' is-niver' : '');
+    card.innerHTML = `
+      <div class="member-avatar" style="background:linear-gradient(135deg, ${isLider ? '#D99E00,#FFB800' : isNiverMes ? '#D99E00,#FFB800' : 'var(--accent-electric-dark),var(--accent-electric)'})">${initials}</div>
+      <div class="member-info">
+        <h4>${m.nome}</h4>
+        <p>${dia}/${mes}</p>
+        <span class="cargo-badge${isLider ? ' cargo-lider' : ''}">${m.cargo}</span>
+        ${abaAtual === 'niver' ? `<br><span class="time-badge ${diasPara <= 7 ? 'urgent' : ''}">${diasPara === 0 ? '🎉 HOJE!' : diasPara === 1 ? '🎂 Amanhã' : '⏳ ' + diasPara + ' dias'}</span>` : ''}
+      </div>
+      <div class="member-actions">
+        <button class="btn-action btn-edit" onclick="editar(${m.id})">✏️ Editar</button>
+        <button class="btn-action btn-zap" onclick="enviarParabens('${m.nome.replace(/'/g,"\\'")}','${m.cargo}')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M5.077 20c-.557 0-1.091-.133-1.569-.393A11.985 11.985 0 0 1 1.24 3.62C3.003 1.86 5.377 1 7.87 1c2.494 0 4.866.86 6.631 2.62 1.764 1.759 2.737 4.127 2.737 6.621 0 2.493-.972 4.861-2.737 6.621-1.765 1.76-4.137 2.62-6.631 2.62a11.92 11.92 0 0 1-2.793-.333zM12 2.4C7.777 2.4 4.4 5.777 4.4 10S7.777 17.6 12 17.6 19.6 14.223 19.6 10 16.223 2.4 12 2.4z"/></svg>
+          ZAP
+        </button>
+      </div>`;
+    lista.appendChild(card);
+  });
+
+  document.getElementById('dash-total').textContent = membros.length;
+  document.getElementById('dash-niver').textContent = niverMesCount;
+  document.getElementById('lista-label').textContent =
+    abaAtual === 'niver' ? '🎂 PRÓXIMOS ANIVERSÁRIOS' : '👥 MEMBROS';
+  localStorage.setItem('church_db_v3', JSON.stringify(membros));
+}
+
+// ============================================================
+// CRUD
+// ============================================================
+function salvar() {
+  const id = document.getElementById('f_id').value;
+  const nome = document.getElementById('f_nome').value.trim();
+  const data = document.getElementById('f_data').value;
+  if (!nome || !data) { alert('Preencha Nome e Data!'); return; }
+
+  const novo = {
+    id: id ? parseInt(id) : Date.now(),
+    nome: nome.toUpperCase(),
+    data: data,
+    cargo: document.getElementById('f_cargo').value,
+    tel: document.getElementById('f_telefone').value.replace(/\D/g, '')
+  };
+
+  if (id) {
+    const idx = membros.findIndex(m => m.id === parseInt(id));
+    membros[idx] = novo;
+  } else {
+    membros.push(novo);
+  }
+  renderizar();
+  fecharForm();
+}
+
+function editar(id) {
+  const m = membros.find(item => item.id === id);
+  document.getElementById('f_id').value = m.id;
+  document.getElementById('f_nome').value = m.nome;
+  document.getElementById('f_data').value = m.data;
+  document.getElementById('f_cargo').value = m.cargo;
+  document.getElementById('f_telefone').value = m.tel;
+  document.getElementById('form-titulo').textContent = '✏️ Editar Membro';
+  abrirForm();
+}
+
+function resetarDados() {
+  if (confirm('Isso voltará para a lista original de ' + backupMembros.length + ' membros. Confirma?')) {
+    membros = [...backupMembros];
+    renderizar();
+    fecharForm();
+  }
+}
+
+function mudarAba(aba, btn) {
+  abaAtual = aba;
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderizar();
+}
+
+function abrirForm() {
+  document.getElementById('form-overlay').style.display = 'flex';
+}
+function fecharForm() {
+  document.getElementById('form-overlay').style.display = 'none';
+  document.getElementById('f_id').value = '';
+  document.getElementById('f_nome').value = '';
+  document.getElementById('f_data').value = '';
+  document.getElementById('f_cargo').value = 'Membro';
+  document.getElementById('f_telefone').value = '';
+  document.getElementById('form-titulo').textContent = '✨ Novo Cadastro';
+}
+
+document.getElementById('buscaNome').addEventListener('input', renderizar);
+
+// Fechar modal ao clicar fora
+document.getElementById('form-overlay').addEventListener('click', function(e) {
+  if (e.target === this) fecharForm();
+});
+
+window.onload = renderizar;
+</script>
+</body>
+</html>
